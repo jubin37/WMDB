@@ -1,0 +1,89 @@
+﻿<Window x:Class="WMDB.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WMDB"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="725">
+    <Grid Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"></RowDefinition>
+            <RowDefinition Height="10*"></RowDefinition>
+            <RowDefinition Height="25*"></RowDefinition>
+            <RowDefinition Height="45*"></RowDefinition>
+            <RowDefinition Height="15*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="30*"></ColumnDefinition>
+                <ColumnDefinition Width="10*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Name="lblHeading" Style="{StaticResource LabelRequerStyle1}" HorizontalContentAlignment="Center" Content="WMDB" />
+            <Button Height="40" Name="btnGetDBName" FontSize="15pt" Click="btnGetDBName_Click" Content="Get DBList" Grid.Column="2" TabIndex="1" />
+        </Grid>
+        <Grid Name="DBandTableGrid" Grid.Row="1" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"></ColumnDefinition>
+                <ColumnDefinition Width="50*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid Name="DBNamesGrid" Visibility="Hidden">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40*"></ColumnDefinition>
+                    <ColumnDefinition Width="60*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Style="{StaticResource LabelStyle}" Content="Select DB" Name="lblDBName"></Label>
+                <ComboBox Name="cmbDBName" Margin="10" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbDBName_SelectionChanged" Grid.Column="1" TabIndex="0" />
+            </Grid>
+            <Grid Name="TableNameGrid" Grid.Column="1" Visibility="Hidden">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40*"></ColumnDefinition>
+                    <ColumnDefinition Width="55*"></ColumnDefinition>
+                    <ColumnDefinition Width="5*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Style="{StaticResource LabelStyle}" Content="Select Table" Name="lblScreenName"></Label>
+                <ComboBox Name="cmbTableName" Margin="10" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbTableName_SelectionChanged" Grid.Column="1" TabIndex="2" />
+            </Grid>
+        </Grid>
+        <Grid Name="ColumnNamesGrid" Grid.Row="2" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25*"></ColumnDefinition>
+                <ColumnDefinition Width="25*"></ColumnDefinition>
+                <ColumnDefinition Width="25*"></ColumnDefinition>
+                <ColumnDefinition Width="25*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid Name="AllColumnNamesGrid" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50*"></RowDefinition>
+                    <RowDefinition Height="50*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Style="{StaticResource SmallLabelStyle}" Content="Select Sub Column" Name="lblColumnNames"></Label>
+                <ComboBox Name="cmbAllColumnNames" Margin="10" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbAllColumnNames_SelectionChanged" Grid.Row="1" TabIndex="3" />
+            </Grid>
+            <Grid Name="ColumnNameGrid" Grid.Column="1" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50*"></RowDefinition>
+                    <RowDefinition Height="50*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Style="{StaticResource SmallLabelStyle}" Content="Select Column Name" Name="lblColumnName"></Label>
+                <ComboBox Name="cmbColumnName" Margin="10" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbColumnName_SelectionChanged_1" Grid.Row="1" TabIndex="4" />
+            </Grid>
+            <Grid Name="LabelValue" Grid.Column="2" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50*"></RowDefinition>
+                    <RowDefinition Height="50*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Style="{StaticResource SmallLabelStyle}" Content="Select Label Name" Name="lblLabelName"></Label>
+                <ComboBox Name="cmbLabelValue" Margin="10" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbLabelValue_SelectionChanged_1" Grid.Row="1" TabIndex="4" />
+            </Grid>
+        </Grid>
+        <Grid Name="SqlDetailsGrid" Grid.Row="3">
+            <DataGrid Name="SqlDataGrid"/>
+        </Grid>
+        <Grid Name="StatusGrid" Grid.Row="4">
+            <StatusBar />
+        </Grid>
+    </Grid>
+</Window>
