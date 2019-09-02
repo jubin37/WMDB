@@ -13,10 +13,13 @@ namespace WMDB
     {
         DataTable dt = new DataTable();
         DataSet ds = new DataSet();
+        GetSelectedValues GSV = new GetSelectedValues();
+
         public MainWindow()
         {
             InitializeComponent();
             HideGrid();
+           
         }
 
         private void HideGrid()
@@ -28,80 +31,64 @@ namespace WMDB
             AllColumnNamesGrid.Visibility = Visibility.Hidden;
             ColumnNameGrid.Visibility = Visibility.Hidden;
             LabelValue.Visibility = Visibility.Hidden;
+            SqlDataGrid.Visibility = Visibility.Hidden;
         }
 
         private void btnGetDBName_Click(object sender, RoutedEventArgs e)
         {
             HideGrid();
-            string cs = @"Server = (local); Database =''; Trusted_Connection = Yes; ";
-            SqlConnection con = new SqlConnection(cs);
-            SqlCommand cmd = new SqlCommand("SELECT name FROM master.sys.databases", con);
-            SqlDataAdapter sda = new SqlDataAdapter(cmd);
-            //DataSet ds = new DataSet();
-            con.Open();
-            sda.Fill(ds);
-
-            cmbDBName.ItemsSource = ds.Tables[0].DefaultView;
-            cmbDBName.DisplayMemberPath = ds.Tables[0].Columns["name"].ToString();
-            cmbDBName.SelectedValuePath = ds.Tables[0].Columns["name"].ToString();
-            cmbDBName.SelectedValue = "Select Below DB";
+            string sql = "SELECT name FROM sys.databases";
+            GetValuesFromDB(sql);
+            cmbDBName.ItemsSource = dt.AsDataView();
+            cmbDBName.DisplayMemberPath = dt.Columns[0].ToString();
+            cmbDBName.SelectedValuePath = dt.Columns[0].ToString();
+            cmbDBName.SelectedValue = dt.Columns[0].ToString();
             DBandTableGrid.Visibility = Visibility.Visible;
             DBNamesGrid.Visibility = Visibility.Visible;
         }
 
-        private void GetTableNames(DataSet dataSet, string tablename)
-        {
-            if (tablename != "")
-            {
-                foreach (DataTable table in dataSet.Tables)
-                {
-
-                    if (table.Columns[0].ColumnName == "Person")
-                    {
-                        MessageBox.Show("Got");
-                    }
-
-                    else { MessageBox.Show("Not Got"); }
-
-                    //string gettable = Convert.ToString(ds.Tables["Table"].Rows[0][tablename]);
-
-                    //string name = Convert.ToString(ds.Tables[0].Rows[0][tablename]);
-                    //if (table.Rows.Contains(tablename))
-                    //{
-                    //    MessageBox.Show("Got");
-                    //}
-                    //else { MessageBox.Show("Not Got"); }
-                }
-            }
+        private void GetValuesFromDB(string sql)
+        {          
+            string cs = @"Server = (local); Database =''; Trusted_Connection = Yes; ";
+            SqlConnection con = new SqlConnection(cs);
+            SqlCommand cmd = new SqlCommand(sql, con);
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);       
+            con.Open();
+            dt = new DataTable();
+            sda.Fill(dt);
         }
+
+        struct GetSelectedValues
+        {
+           public string Database;
+           public string Table;
+           public GetSelectedValues(string database, string tablename) 
+           {
+               Database = database;
+               Table = tablename;
+           }
+        };
 
         private void cmbDBName_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            string[] Gh = new string[ds.Tables[0].Rows.Count];
-            foreach (DataTable table in ds.Tables)
-            {
-                int i = 0;
-                foreach (DataRow dr in table.Rows)
-                {
-                    //Gh[i] = dr["name"].ToString();
-                    //i++;
-                    if(dr["name"].ToString() == cmbDBName.SelectedValue.ToString())
-                    {
-                        MessageBox.Show(cmbDBName.SelectedValue.ToString());
-                    }
-                }
-            }
-
-            //GetTableNames(ds, cmbDBName.SelectedValue.ToString());
-            cmbTableName.ItemsSource = ds.Tables[0].DefaultView;
-            cmbTableName.DisplayMemberPath = ds.Tables[0].Columns["name"].ToString();
-            cmbTableName.SelectedValuePath = ds.Tables[0].Columns["name"].ToString();
-            cmbTableName.SelectedValue = "Select Below DB";
-            TableNameGrid.Visibility = Visibility.Visible;
+            string selectedDBname = cmbDBName.SelectedValue.ToString();
+            GSV.Database = selectedDBname;
+            string sql = "SELECT name FROM " + GSV.Database + ".sys.tables";
+            GetValuesFromDB(sql);
+            cmbTableName.ItemsSource = dt.AsDataView();
+            cmbTableName.DisplayMemberPath = dt.Columns[0].ToString();
+            cmbTableName.SelectedValuePath = dt.Columns[0].ToString();
+            cmbTableName.SelectedValue = dt.Columns[0].ToString(); ;
+            TableNameGrid.Visibility = Visibility.Visible;     
         }
 
         private void cmbTableName_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            string selectedtablename = cmbTableName.SelectedValue.ToString();
+            GSV.Table = selectedtablename;
+            string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
+            GetValuesFromDB(sql);
+            SqlDataGrid.Visibility = Visibility.Visible;
             SqlDataGrid.ItemsSource = dt.DefaultView;
         }
 
