@@ -101,7 +101,6 @@
         <Setter Property="FontFamily" Value="Cambria"></Setter>
         <Setter Property="FontWeight" Value="Bold"></Setter>
         <Setter Property="FontSize" Value="20Pt"></Setter>
-        <!--<Setter Property="Typography.Capitals" Value="SmallCaps"></Setter>-->
         <Setter Property="HorizontalContentAlignment" Value="Right"></Setter>
         <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
     </Style>
@@ -118,7 +117,7 @@
         <Setter Property="Foreground" Value="Black"/>
         <Setter Property="FontFamily" Value="Cambria"></Setter>
         <Setter Property="FontWeight" Value="Bold"></Setter>
-        <Setter Property="FontSize" Value="10pt"></Setter>
+        <Setter Property="FontSize" Value="12pt"></Setter>
         <Setter Property="Typography.Capitals" Value="SmallCaps"></Setter>
         <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
         <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
@@ -346,9 +345,9 @@
 
     <Style x:Key="CustomComboBox" TargetType="{x:Type ComboBox}">
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
-        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="MinWidth" Value="60"/>
-        <Setter Property="MinHeight" Value="25"/>
+        <Setter Property="MinHeight" Value="30"/>
         <Setter Property="UIElement.SnapsToDevicePixels" Value="True"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>

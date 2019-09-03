@@ -29,3 +29,4 @@ D:\WPF\WMDB\WMDB\obj\Debug\MainWindow.baml
 D:\WPF\WMDB\WMDB\obj\Debug\WMDB.g.resources
 D:\WPF\WMDB\WMDB\obj\Debug\WMDB.Properties.Resources.resources
 D:\WPF\WMDB\WMDB\obj\Debug\WMDB.csproj.GenerateResource.Cache
+D:\WPF\WMDB\WMDB\obj\Debug\WMDB.csprojResolveAssemblyReference.cache
