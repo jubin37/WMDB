@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,7 +7,9 @@ using System.Data.SqlClient;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 
 
 namespace WMDB
@@ -20,21 +23,72 @@ namespace WMDB
         DataSet ds = new DataSet();
         GetSelectedValues GSV = new GetSelectedValues();
 
+
+        struct GetSelectedValues
+        {
+            public string Database;
+            public string Table;
+            public GetSelectedValues(string database, string tablename)
+            {
+                Database = database;
+                Table = tablename;
+            }
+        };
+
         public MainWindow()
         {
             InitializeComponent();
             HideGrid();
-
+            CloseBtnfn();
+            MinimizeBtnfn();
         }
 
+
+        public void CloseBtnfn() 
+        {  
+            var imagepath = new Uri(GetImagePath("/Images/close.png"));
+            var bitmap = new BitmapImage(imagepath);
+            CloseBtn.Source = bitmap;}
+
+        public void MinimizeBtnfn()
+        {
+            var imagepath = new Uri(GetImagePath("/Images/min.png"));
+            var bitmap = new BitmapImage(imagepath);
+            MinimizeBtn.Source = bitmap;
+        }
+
+        public ImageBrush LoadImage(string ImagePath, Image Imagename)
+        {
+            ImageBrush MyBrush = new ImageBrush();
+            Image Img = new Image();
+            Img.Source = new BitmapImage(new Uri(ImagePath));
+            MyBrush.ImageSource = Img.Source;
+            return MyBrush;
+        }
+
+
+        public string GetImagePath(string ImagePath)
+        {
+            return AppDomain.CurrentDomain.BaseDirectory + ImagePath;
+        }
         private void HideGrid()
         {
             DBandTableGrid.Visibility = Visibility.Hidden;
             DBNamesGrid.Visibility = Visibility.Hidden;
             TableNameGrid.Visibility = Visibility.Hidden;
             ColumnNamesGrid.Visibility = Visibility.Hidden;
-
             SqlDataGrid.Visibility = Visibility.Hidden;
+        }
+
+        private void GetValuesFromDB(string sql)
+        {
+            string cs = @"Server = (local); Database =''; Trusted_Connection = Yes; ";
+            SqlConnection con = new SqlConnection(cs);
+            SqlCommand cmd = new SqlCommand(sql, con);
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            con.Open();
+            dt = new DataTable();
+            sda.Fill(dt);
         }
 
         private void btnGetDBName_Click(object sender, RoutedEventArgs e)
@@ -50,27 +104,7 @@ namespace WMDB
             DBNamesGrid.Visibility = Visibility.Visible;
         }
 
-        private void GetValuesFromDB(string sql)
-        {
-            string cs = @"Server = (local); Database =''; Trusted_Connection = Yes; ";
-            SqlConnection con = new SqlConnection(cs);
-            SqlCommand cmd = new SqlCommand(sql, con);
-            SqlDataAdapter sda = new SqlDataAdapter(cmd);
-            con.Open();
-            dt = new DataTable();
-            sda.Fill(dt);
-        }
 
-        struct GetSelectedValues
-        {
-            public string Database;
-            public string Table;
-            public GetSelectedValues(string database, string tablename)
-            {
-                Database = database;
-                Table = tablename;
-            }
-        };
 
         private void cmbDBName_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
@@ -94,22 +128,17 @@ namespace WMDB
 
             GetValuesFromDB(sql);
             int i = 0;
-            List<string> ItemList = new List<string>();
+        
             string[] DtColumnNames = new string[dt.Columns.Count];
-            //foreach (DataRow dr in dt.Rows)
-            //{
-                foreach (DataColumn dc in dt.Columns)
-                {
-                    DtColumnNames[i] = dc.ColumnName.ToString();                  
-                    i++;
-                }
-            //}
-                ItemList.AddRange(DtColumnNames);
 
-                cmbAllColumnNames.ItemsSource = ItemList;//dt.AsDataView();
-                cmbAllColumnNames.DisplayMemberPath = ItemList.ToString(); //dt.Columns[0].ToString();
-                cmbAllColumnNames.SelectedValuePath = ItemList.ToString(); //dt.Columns[0].ToString();
-                cmbAllColumnNames.SelectedValue = ItemList[0].ToString(); //dt.Columns[0].ToString();
+            foreach (DataColumn dc in dt.Columns)
+            {
+                DtColumnNames[i] = dc.ColumnName.ToString();
+                i++;
+            }
+
+            cmbAllColumnNames.ItemsSource = DtColumnNames;
+            //cmbAllColumnNames.SelectedValue = DtColumnNames[0]; 
             ColumnNamesGrid.Visibility = Visibility.Visible;
             AllColumnNamesGrid.Visibility = Visibility.Visible;
             SqlDataGrid.ItemsSource = dt.DefaultView;
@@ -149,6 +178,9 @@ namespace WMDB
         {
 
         }
+
+
+
 
         private void bgworker()
         {
