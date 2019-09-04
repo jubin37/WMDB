@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
@@ -39,25 +40,30 @@ namespace WMDB
         {
             InitializeComponent();
             HideGrid();
-            CloseBtnfn();
-            MinimizeBtnfn();
-        }
+            SetButtonImage(btnClose, "/Images/close.png");
+            //SetButtonImage(btnMinimize, "/Images/minimize.png");
+        }    
 
-
-        public void CloseBtnfn() 
-        {  
-            var imagepath = new Uri(GetImagePath("/Images/close.png"));
-            var bitmap = new BitmapImage(imagepath);
-            CloseBtn.Source = bitmap;}
-
-        public void MinimizeBtnfn()
+        public void SetButtonImage(Button Btn, string ImageName, string ButtonText = "")
         {
-            var imagepath = new Uri(GetImagePath("/Images/min.png"));
-            var bitmap = new BitmapImage(imagepath);
-            MinimizeBtn.Source = bitmap;
+            try
+            {
+                Button b = new Button();
+                b = Btn;
+                b.Content = "";
+                if (ButtonText != "")
+                { 
+                    b.Content = ButtonText;
+                }
+                b.Background = LoadImage(GetPath(ImageName));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
 
-        public ImageBrush LoadImage(string ImagePath, Image Imagename)
+        public ImageBrush LoadImage(string ImagePath)
         {
             ImageBrush MyBrush = new ImageBrush();
             Image Img = new Image();
@@ -66,11 +72,11 @@ namespace WMDB
             return MyBrush;
         }
 
-
-        public string GetImagePath(string ImagePath)
+        public string GetPath(string PathName)
         {
-            return AppDomain.CurrentDomain.BaseDirectory + ImagePath;
+            return AppDomain.CurrentDomain.BaseDirectory + PathName;
         }
+
         private void HideGrid()
         {
             DBandTableGrid.Visibility = Visibility.Hidden;
@@ -203,6 +209,25 @@ namespace WMDB
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             prgbar.Value = e.ProgressPercentage;
+        }
+               
+        private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                this.DragMove();
+            }
+        }
+
+        private void btnMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowStyle = WindowStyle.None;
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }
