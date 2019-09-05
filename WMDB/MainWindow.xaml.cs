@@ -86,7 +86,7 @@ namespace WMDB
             SqlDataGrid.Visibility = Visibility.Hidden;
         }
 
-        private void GetValuesFromDB(string sql)
+        private void GetValuesFromDB(string sql, Boolean GetLastEntry)
         {
             string cs = @"Server = (local); Database =''; Trusted_Connection = Yes; ";
             SqlConnection con = new SqlConnection(cs);
@@ -95,13 +95,17 @@ namespace WMDB
             con.Open();
             dt = new DataTable();
             sda.Fill(dt);
+            if (GetLastEntry == true)
+            {
+                
+            }
         }
 
         private void btnGetDBName_Click(object sender, RoutedEventArgs e)
         {
             HideGrid();
             string sql = "SELECT name FROM sys.databases";
-            GetValuesFromDB(sql);
+            GetValuesFromDB(sql, false);
             cmbDBName.ItemsSource = dt.AsDataView();
             cmbDBName.DisplayMemberPath = dt.Columns[0].ToString();
             cmbDBName.SelectedValuePath = dt.Columns[0].ToString();
@@ -117,7 +121,7 @@ namespace WMDB
             string selectedDBname = cmbDBName.SelectedValue.ToString();
             GSV.Database = selectedDBname;
             string sql = "SELECT name FROM " + GSV.Database + ".sys.tables";
-            GetValuesFromDB(sql);
+            GetValuesFromDB(sql, false);
             cmbTableName.ItemsSource = dt.AsDataView();
             cmbTableName.DisplayMemberPath = dt.Columns[0].ToString();
             cmbTableName.SelectedValuePath = dt.Columns[0].ToString();
@@ -132,7 +136,7 @@ namespace WMDB
             //string sql = "Use " + GSV.Database + "@ GO@ select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='[" + GSV.Table + "]'";
             string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
 
-            GetValuesFromDB(sql);
+            GetValuesFromDB(sql, true);
             int i = 0;
         
             string[] DtColumnNames = new string[dt.Columns.Count];
@@ -155,7 +159,7 @@ namespace WMDB
         public void ViewSQLInDataGrid()
         {
             string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
-            GetValuesFromDB(sql);
+            GetValuesFromDB(sql, false);
             SqlDataGrid.ItemsSource = dt.DefaultView;
             SqlDataGrid.Visibility = Visibility.Visible;
         }

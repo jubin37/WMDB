@@ -8,7 +8,7 @@
         Title="MainWindow" Height="650" Width="800" WindowStyle="None" MouseDown="Window_MouseDown" WindowStartupLocation="CenterScreen" >
     <Grid Name="MainGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="10*"></RowDefinition>
+            <RowDefinition Height="5*"></RowDefinition>
             <RowDefinition Height="10*"></RowDefinition>
             <RowDefinition Height="10*"></RowDefinition>
             <RowDefinition Height="15*"></RowDefinition>
@@ -21,13 +21,13 @@
                 <ColumnDefinition Width="60*"></ColumnDefinition>
                 <ColumnDefinition Width="10*"></ColumnDefinition>
                 <ColumnDefinition Width="10*"></ColumnDefinition>
-                <ColumnDefinition Width="7*"></ColumnDefinition>
+                <ColumnDefinition Width="4*"></ColumnDefinition>
                 <ColumnDefinition Width="1*"></ColumnDefinition>
-                <ColumnDefinition Width="7*"></ColumnDefinition>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="4*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Button Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Name="btnMinimize" Width="55" Click="btnMinimize_Click" Grid.Column="3"></Button>
-            <Button Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Name="btnClose" Width="55" Click="btnClose_Click" Grid.Column="5"></Button>
+            <Button Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Name="btnMinimize" Click="btnMinimize_Click" Grid.Column="3"></Button>
+            <Button Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Name="btnClose" Click="btnClose_Click" Grid.Column="5"></Button>
         </Grid>
         <Grid Name="TitleGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -75,7 +75,7 @@
                     <RowDefinition Height="50*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Label Style="{StaticResource SmallLabelStyle}" Content="Column Name" Name="lblColumnNames"></Label>
-                <ComboBox Name="cmbAllColumnNames" Text="Select Item" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbAllColumnNames_SelectionChanged" Grid.Row="1" TabIndex="3" />
+                <ComboBox Name="cmbAllColumnNames" Text="Select Item" Width="250" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbAllColumnNames_SelectionChanged" Grid.Row="1" TabIndex="3" />
             </Grid>
             <Grid Name="ColumnNameGrid" Grid.Column="1" >
                 <Grid.RowDefinitions>
@@ -83,7 +83,7 @@
                     <RowDefinition Height="50*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Label Style="{StaticResource SmallLabelStyle}" Content="Select Column Name" Name="lblColumnName"></Label>
-                <ComboBox Name="cmbColumnName" Margin="10" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbColumnName_SelectionChanged_1" Grid.Row="1" TabIndex="4" />
+                <ComboBox Name="cmbColumnName" Text="Select Item" Width="250" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbColumnName_SelectionChanged_1" Grid.Row="1" TabIndex="4" />
             </Grid>
         </Grid>
         
@@ -93,7 +93,9 @@
                 <ColumnDefinition Width="30*"></ColumnDefinition>
                 <ColumnDefinition Width="30*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            
+            <Grid Grid.Column="2">
+                <Label Name="LabelLastEntry" Style="{StaticResource SmallLabelStyle}" ></Label>
+            </Grid>
         </Grid>
         <Grid Name="SqlDetailsGrid" Grid.Row="5">
             <DataGrid Name="SqlDataGrid"/>
