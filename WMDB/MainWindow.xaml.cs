@@ -41,7 +41,7 @@ namespace WMDB
             InitializeComponent();
             HideGrid();
             SetButtonImage(btnClose, "/Images/close.png");
-            //SetButtonImage(btnMinimize, "/Images/minimize.png");
+            SetButtonImage(btnMinimize, "/Images/minimize.png");
         }    
 
         public void SetButtonImage(Button Btn, string ImageName, string ButtonText = "")
@@ -82,7 +82,9 @@ namespace WMDB
             DBandTableGrid.Visibility = Visibility.Hidden;
             DBNamesGrid.Visibility = Visibility.Hidden;
             TableNameGrid.Visibility = Visibility.Hidden;
+            ColumnNamesAndValuesGrid.Visibility = Visibility.Hidden;
             ColumnNamesGrid.Visibility = Visibility.Hidden;
+            ColumnValuesGrid.Visibility = Visibility.Hidden;
             SqlDataGrid.Visibility = Visibility.Hidden;
         }
 
@@ -113,9 +115,7 @@ namespace WMDB
             DBandTableGrid.Visibility = Visibility.Visible;
             DBNamesGrid.Visibility = Visibility.Visible;
         }
-
-
-
+        
         private void cmbDBName_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             string selectedDBname = cmbDBName.SelectedValue.ToString();
@@ -133,64 +133,47 @@ namespace WMDB
         {
             string selectedtablename = cmbTableName.SelectedValue.ToString();
             GSV.Table = selectedtablename;
-            //string sql = "Use " + GSV.Database + "@ GO@ select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='[" + GSV.Table + "]'";
             string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
-
             GetValuesFromDB(sql, true);
-            int i = 0;
-        
+            int i = 0;        
             string[] DtColumnNames = new string[dt.Columns.Count];
-
             foreach (DataColumn dc in dt.Columns)
             {
                 DtColumnNames[i] = dc.ColumnName.ToString();
                 i++;
             }
-
-            cmbAllColumnNames.ItemsSource = DtColumnNames;
-            //cmbAllColumnNames.SelectedValue = DtColumnNames[0]; 
+            cmbColumnNames.ItemsSource = DtColumnNames;
+            ColumnNamesAndValuesGrid.Visibility = Visibility.Visible;
             ColumnNamesGrid.Visibility = Visibility.Visible;
-            AllColumnNamesGrid.Visibility = Visibility.Visible;
-            SqlDataGrid.ItemsSource = dt.DefaultView;
-            SqlDataGrid.Visibility = Visibility.Visible;
-            //ViewSQLInDataGrid();
+            ViewSQLInDataGrid();
         }
 
+
+        private void cmbColumnNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string selectedColumnName = cmbColumnNames.SelectedValue.ToString();
+
+            string sql = "SELECT distinct(" + selectedColumnName + ") FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
+            GetValuesFromDB(sql, false);
+            cmbColumnValue.ItemsSource = dt.AsDataView();
+            cmbColumnValue.DisplayMemberPath = dt.Columns[0].ToString();
+            cmbColumnValue.SelectedValuePath = dt.Columns[0].ToString();
+            cmbColumnValue.SelectedValue = dt.Columns[0].ToString();
+
+            ColumnValuesGrid.Visibility = Visibility.Visible;
+            ViewSQLInDataGrid();
+        }
+
+        private void cmbColumnValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+    
         public void ViewSQLInDataGrid()
         {
-            string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
-            GetValuesFromDB(sql, false);
             SqlDataGrid.ItemsSource = dt.DefaultView;
             SqlDataGrid.Visibility = Visibility.Visible;
         }
-
-        private void cmbColumnName_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void cmbLabelValue_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void cmbAllColumnNames_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void cmbLabelValue_SelectionChanged_1(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void cmbColumnName_SelectionChanged_1(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-
-        }
-
-
-
 
         private void bgworker()
         {
@@ -233,5 +216,6 @@ namespace WMDB
         {
             Application.Current.Shutdown();
         }
+
     }
 }

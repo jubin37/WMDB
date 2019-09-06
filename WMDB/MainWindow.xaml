@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WMDB"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="800" WindowStyle="None" MouseDown="Window_MouseDown" WindowStartupLocation="CenterScreen" >
+        Title="MainWindow" Height="650" Width="800" ResizeMode="NoResize" WindowStyle="None" MouseDown="Window_MouseDown" WindowStartupLocation="CenterScreen" >
     <Grid Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="5*"></RowDefinition>
@@ -62,28 +62,27 @@
                 <ComboBox Name="cmbTableName" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbTableName_SelectionChanged" Grid.Column="1" TabIndex="2" />
             </Grid>
         </Grid>
-        <Grid Name="ColumnNamesGrid" Grid.Row="3">
+        <Grid Name="ColumnNamesAndValuesGrid" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="33*"></ColumnDefinition>
                 <ColumnDefinition Width="25*"></ColumnDefinition>
-                <ColumnDefinition Width="25*"></ColumnDefinition>
-             
+                <ColumnDefinition Width="25*"></ColumnDefinition>             
             </Grid.ColumnDefinitions>
-            <Grid Name="AllColumnNamesGrid">
+            <Grid Name="ColumnNamesGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50*"></RowDefinition>
                     <RowDefinition Height="50*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Label Style="{StaticResource SmallLabelStyle}" Content="Column Name" Name="lblColumnNames"></Label>
-                <ComboBox Name="cmbAllColumnNames" Text="Select Item" Width="250" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbAllColumnNames_SelectionChanged" Grid.Row="1" TabIndex="3" />
+                <Label Style="{StaticResource SmallLabelStyle}" Content="Select Column Name" Name="lblColumnNames"></Label>
+                <ComboBox Name="cmbColumnNames" Text="Select Item" Width="250" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbColumnNames_SelectionChanged" Grid.Row="1" TabIndex="3" />
             </Grid>
-            <Grid Name="ColumnNameGrid" Grid.Column="1" >
+            <Grid Name="ColumnValuesGrid" Grid.Column="1" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50*"></RowDefinition>
                     <RowDefinition Height="50*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Label Style="{StaticResource SmallLabelStyle}" Content="Select Column Name" Name="lblColumnName"></Label>
-                <ComboBox Name="cmbColumnName" Text="Select Item" Width="250" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbColumnName_SelectionChanged_1" Grid.Row="1" TabIndex="4" />
+                <Label Style="{StaticResource SmallLabelStyle}" Content="Select Column Value" Name="lblColumnName"></Label>
+                <ComboBox Name="cmbColumnValue" Text="Select Item" Width="250" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbColumnValue_SelectionChanged" Grid.Row="1" TabIndex="4" />
             </Grid>
         </Grid>
         
