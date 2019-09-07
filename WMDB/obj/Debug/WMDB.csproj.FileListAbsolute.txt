@@ -35,7 +35,6 @@ E:\WMDB\WMDB\obj\Debug\WMDB.exe
 E:\WMDB\WMDB\obj\Debug\WMDB.pdb
 E:\WMDB\WMDB\bin\Debug\WMDB.exe
 E:\WMDB\WMDB\bin\Debug\WMDB.pdb
-E:\WMDB\WMDB\obj\Debug\WMDB.csprojResolveAssemblyReference.cache
 E:\WMDB\WMDB\obj\Debug\Styles\StyleSheet.baml
 E:\WMDB\WMDB\obj\Debug\MainWindow.g.cs
 E:\WMDB\WMDB\obj\Debug\App.g.cs
