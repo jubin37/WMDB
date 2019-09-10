@@ -29,7 +29,6 @@ D:\WPF\WMDB\WMDB\obj\Debug\MainWindow.baml
 D:\WPF\WMDB\WMDB\obj\Debug\WMDB.g.resources
 D:\WPF\WMDB\WMDB\obj\Debug\WMDB.Properties.Resources.resources
 D:\WPF\WMDB\WMDB\obj\Debug\WMDB.csproj.GenerateResource.Cache
-D:\WPF\WMDB\WMDB\obj\Debug\WMDB.csprojResolveAssemblyReference.cache
 E:\WMDB\WMDB\bin\Debug\WMDB.exe.config
 E:\WMDB\WMDB\obj\Debug\WMDB.exe
 E:\WMDB\WMDB\obj\Debug\WMDB.pdb
@@ -45,3 +44,4 @@ E:\WMDB\WMDB\obj\Debug\MainWindow.baml
 E:\WMDB\WMDB\obj\Debug\WMDB.g.resources
 E:\WMDB\WMDB\obj\Debug\WMDB.Properties.Resources.resources
 E:\WMDB\WMDB\obj\Debug\WMDB.csproj.GenerateResource.Cache
+D:\WPF\WMDB\WMDB\obj\Debug\WMDB.csprojResolveAssemblyReference.cache

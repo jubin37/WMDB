@@ -23,7 +23,7 @@ namespace WMDB
         DataTable dt = new DataTable();
         DataSet ds = new DataSet();
         GetSetValues GSV = new GetSetValues();
-        
+
         struct GetSetValues
         {
             public string Database;
@@ -38,10 +38,27 @@ namespace WMDB
         public MainWindow()
         {
             InitializeComponent();
+            OnloadFunction();
+        }
+
+        public void OnloadFunction()
+        {
             HideGrid();
+            StartButtonsGrid.Visibility = Visibility.Visible;
+            UserSelectionGrid.Visibility = Visibility.Hidden;
             SetButtonImage(btnClose, "/Images/close.png");
             SetButtonImage(btnMinimize, "/Images/minimize.png");
-        }    
+            SetButtonImage(btnHome, "/Images/Home.png");
+        }
+
+        public ImageBrush BindImage(Image img, string ImagePath)
+        {
+            ImageBrush MyBrush = new ImageBrush();
+            img.Source = new BitmapImage(new Uri(ImagePath));
+            MyBrush.ImageSource = img.Source;
+            return MyBrush;
+        }
+
 
         private void GetValuesFromDB(string sql, Boolean GetLastEntry)
         {
@@ -54,103 +71,176 @@ namespace WMDB
             sda.Fill(dt);
             if (GetLastEntry == true)
             {
-               
+
             }
+        }
+
+        private void btnHome_Click(object sender, RoutedEventArgs e)
+        {
+            OnloadFunction();
         }
 
         private void btnGetDBName_Click(object sender, RoutedEventArgs e)
         {
             HideGrid();
             MyIspGrid.Visibility = Visibility.Hidden;
-            string sql = "SELECT name FROM sys.databases";
+            string sql = "SELECT name FROM sys.databases order by name";
             GetValuesFromDB(sql, false);
-            cmbDBName.ItemsSource = dt.AsDataView();
-            cmbDBName.DisplayMemberPath = dt.Columns[0].ToString();
-            cmbDBName.SelectedValuePath = dt.Columns[0].ToString();
-            cmbDBName.SelectedValue = dt.Columns[0].ToString();
-            DBandTableGrid.Visibility = Visibility.Visible;
-            DBNamesGrid.Visibility = Visibility.Visible;
-        }
-        
-        private void cmbDBName_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            GSV.Database = cmbDBName.SelectedValue.ToString();          
-            string sql = "SELECT name FROM " + GSV.Database + ".sys.tables";
-            GetValuesFromDB(sql, false);
-            cmbTableName.ItemsSource = dt.AsDataView();
-            cmbTableName.DisplayMemberPath = dt.Columns[0].ToString();
-            cmbTableName.SelectedValuePath = dt.Columns[0].ToString();
-            cmbTableName.SelectedValue = dt.Columns[0].ToString();
-            TableNameGrid.Visibility = Visibility.Visible;
-            ViewSQLInDataGrid();
+            if (CheckValueExist(dt))
+            {
+                cmbDBName.ItemsSource = dt.AsDataView();
+                cmbDBName.DisplayMemberPath = dt.Columns[0].ToString();
+                cmbDBName.SelectedValuePath = dt.Columns[0].ToString();
+                cmbDBName.SelectedValue = dt.Columns[0].ToString();
+                SetLabelValues(LabelStatus, "", "");
+                StartButtonsGrid.Visibility = Visibility.Hidden;
+                UserSelectionGrid.Visibility = Visibility.Visible;
+                ViewSQLInDataGrid();
+            }
+            else
+            {
+                SetLabelValues(LabelStatus, "No values Found", "#ff0000");
+            }
+
         }
 
-        private void cmbTableName_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        public bool CheckValueExist(DataTable dt)
         {
-            GSV.Table = cmbTableName.SelectedValue.ToString();            
-            string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
-            GetValuesFromDB(sql, true);
-            int i = 0;        
-            string[] DtColumnNames = new string[dt.Columns.Count];
-            foreach (DataColumn dc in dt.Columns)
+            Boolean status = false;
+            if (dt != null)
             {
-                DtColumnNames[i] = dc.ColumnName.ToString();
-                i++;
+                if (dt.Rows.Count > 1)
+                {
+                    status = true; 
+                }
+                else
+                { 
+                    SqlDetailsGrid.Visibility = Visibility.Hidden; 
+                    status = false; 
+                }                
             }
-            cmbColumnNames.ItemsSource = DtColumnNames;
-            ColumnNamesAndValuesGrid.Visibility = Visibility.Visible;
-            ColumnNamesGrid.Visibility = Visibility.Visible;
-         
-            ViewSQLInDataGrid();
+            else 
+            { 
+                SqlDetailsGrid.Visibility = Visibility.Hidden; 
+                status = false; 
+            }
+            return status;
         }
-        
+
+        private void cmbDBName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            GSV.Database = cmbDBName.SelectedValue.ToString();
+            string sql = "SELECT name FROM " + GSV.Database + ".sys.tables order by name";
+            GetValuesFromDB(sql, false);
+            if (CheckValueExist(dt))
+            {
+                cmbTableName.ItemsSource = dt.AsDataView();
+                cmbTableName.DisplayMemberPath = dt.Columns[0].ToString();
+                cmbTableName.SelectedValuePath = dt.Columns[0].ToString();
+                cmbTableName.SelectedValue = dt.Columns[0].ToString();
+                SetLabelValues(LabelStatus, "", "");
+                TableNameGrid.Visibility = Visibility.Visible;
+                ViewSQLInDataGrid();
+            }
+            else
+            {
+                SetLabelValues(LabelStatus, "No values Found", "#ff0000");
+            }
+        }
+
+        private void cmbTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            GSV.Table = cmbTableName.SelectedValue.ToString();
+            string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table;
+            GetValuesFromDB(sql, true);
+            if (CheckValueExist(dt))
+            {
+                int i = 0;
+                string[] DtColumnNames = new string[dt.Columns.Count];
+                foreach (DataColumn dc in dt.Columns)
+                {
+                    DtColumnNames[i] = dc.ColumnName.ToString();
+                    i++;
+                }
+                cmbColumnNames.ItemsSource = DtColumnNames;
+                SetLabelValues(LabelStatus, "", "");
+                ColumnNamesGrid.Visibility = Visibility.Visible;
+                ViewSQLInDataGrid();
+            }
+            else
+            {
+                SetLabelValues(LabelStatus, "No values Found", "#ff0000");
+            }
+        }
+
         private void cmbColumnNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string selectedColumnName = cmbColumnNames.SelectedValue.ToString();
-            string sql = "SELECT distinct(" + selectedColumnName + ") FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
+            string sql = "SELECT distinct(" + selectedColumnName + ") FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] order by " + selectedColumnName;
             GetValuesFromDB(sql, false);
-            cmbColumnValue.ItemsSource = dt.AsDataView();
-            cmbColumnValue.DisplayMemberPath = dt.Columns[0].ToString();
-            cmbColumnValue.SelectedValuePath = dt.Columns[0].ToString();
-            cmbColumnValue.SelectedValue = dt.Columns[0].ToString();
-            ColumnValuesGrid.Visibility = Visibility.Visible;
-            ViewSQLInDataGrid();
+            if (CheckValueExist(dt))
+            {
+                cmbColumnValue.ItemsSource = dt.AsDataView();
+                cmbColumnValue.DisplayMemberPath = dt.Columns[0].ToString();
+                cmbColumnValue.SelectedValuePath = dt.Columns[0].ToString();
+                //cmbColumnValue.SelectedValue = dt.Columns[0].ToString();
+                SetLabelValues(LabelStatus, "", "");
+                ColumnValuesGrid.Visibility = Visibility.Visible;
+                ViewSQLInDataGrid();
+            }
+            else
+            {
+                SetLabelValues(LabelStatus, "No values Found", "#ff0000");
+            }
         }
 
         private void cmbColumnValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //DataRow[] rows = dt.Select("Column1 = 'this'");
+
         }
-    
+
+
         public void ViewSQLInDataGrid()
         {
             SqlDataGrid.ItemsSource = dt.DefaultView;
             SqlDetailsGrid.Visibility = Visibility.Visible;
         }
 
-        private void bgworker()
+        public void SetLabelValues(Label Label, string Text, string color)
         {
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
-            worker.DoWork += worker_DoWork;
-            worker.ProgressChanged += worker_ProgressChanged;
-            worker.RunWorkerAsync();
-        }
-
-        void worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            for (int i = 0; i < 100; i++)
+            if (Text != "")
             {
-                (sender as BackgroundWorker).ReportProgress(i);
-                Thread.Sleep(100);
+                Label.Content = Text;
+            }
+            else { 
+                Label.Content = ""; 
+            }
+            if (color != "")
+            {
+                var converter = new System.Windows.Media.BrushConverter();
+                var myBrush = (Brush)converter.ConvertFromString(color);
+                Label.Foreground = myBrush;
             }
         }
 
-        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void btnKnowISP_Click(object sender, RoutedEventArgs e)
         {
-            prgbar.Value = e.ProgressPercentage;
+            SqlDetailsGrid.Visibility = Visibility.Hidden;
+            MyIspWB.Source = new Uri("https://www.iptrackeronline.com/locate-ip-on-map-mini.php?lang=1");
+            MyIspGrid.Visibility = Visibility.Visible;
         }
-               
+
+        private void btnDecrypt_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnEncrypt_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -168,12 +258,6 @@ namespace WMDB
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
-        }
-
-        private void btnKnowISP_Click(object sender, RoutedEventArgs e)
-        {
-            SqlDetailsGrid.Visibility = Visibility.Hidden;
-            MyIspGrid.Visibility = Visibility.Visible;
         }
 
         public void SetButtonImage(Button Btn, string ImageName, string ButtonText = "")
@@ -197,6 +281,7 @@ namespace WMDB
 
         public ImageBrush LoadImage(string ImagePath)
         {
+
             ImageBrush MyBrush = new ImageBrush();
             Image Img = new Image();
             Img.Source = new BitmapImage(new Uri(ImagePath));
@@ -211,14 +296,18 @@ namespace WMDB
 
         private void HideGrid()
         {
-            DBandTableGrid.Visibility = Visibility.Hidden;
-            DBNamesGrid.Visibility = Visibility.Hidden;
-            TableNameGrid.Visibility = Visibility.Hidden;
-            ColumnNamesAndValuesGrid.Visibility = Visibility.Hidden;
-            ColumnNamesGrid.Visibility = Visibility.Hidden;
-            ColumnValuesGrid.Visibility = Visibility.Hidden;
             SqlDetailsGrid.Visibility = Visibility.Hidden;
             MyIspGrid.Visibility = Visibility.Hidden;
+
+            //DBandTableGrid.Visibility = Visibility.Hidden;
+            //DBNamesGrid.Visibility = Visibility.Hidden;
+            //TableNameGrid.Visibility = Visibility.Hidden;
+            //ColumnNamesAndValuesGrid.Visibility = Visibility.Hidden;
+            //ColumnNamesGrid.Visibility = Visibility.Hidden;
+            //ColumnValuesGrid.Visibility = Visibility.Hidden;
+
         }
+
+
     }
 }
