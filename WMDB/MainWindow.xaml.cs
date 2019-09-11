@@ -151,7 +151,7 @@ namespace WMDB
         private void cmbTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             GSV.Table = cmbTableName.SelectedValue.ToString();
-            string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table;
+            string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
             GetValuesFromDB(sql, true);
             if (CheckValueExist(dt))
             {
