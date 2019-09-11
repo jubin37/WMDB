@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-
+using System.Security.Cryptography;
 
 namespace WMDB
 {
@@ -38,8 +40,58 @@ namespace WMDB
         public MainWindow()
         {
             InitializeComponent();
-            OnloadFunction();
+            //https://www.aspsnippets.com/Articles/Encrypt-and-Decrypt-Username-or-Password-stored-in-database-in-ASPNet-using-C-and-VBNet.aspx
+            //https://www.c-sharpcorner.com/blogs/how-to-encrypt-or-decrypt-password-using-asp-net-with-c-sharp1
+            string pass = "µ¦´µ¦³’“”•";
+            EncodePasswordToBase64("Tester");
+            DecodeFrom64(pass.Trim());
+            //OnloadFunction();
         }
+
+        public void EncodePasswordToBase64(string password)
+        {
+            string EncryptionKey = "MAKV2SPBNI99212";
+            byte[] clearBytes = Encoding.Unicode.GetBytes(password);
+            using (Aes encryptor = Aes.Create())
+            {
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(clearBytes, 0, clearBytes.Length);
+                        cs.Close();
+                    }
+                    password = Convert.ToBase64String(ms.ToArray());
+                    SetLabelValues(password, "#ff0000");
+                }
+            }        
+        }
+
+        public void DecodeFrom64(string encodedData)
+        {
+            string EncryptionKey = "MAKV2SPBNI99212";
+            byte[] cipherBytes = Convert.FromBase64String(encodedData);
+            using (Aes encryptor = Aes.Create())
+            {
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(cipherBytes, 0, cipherBytes.Length);
+                        cs.Close();
+                    }
+                    encodedData = Encoding.Unicode.GetString(ms.ToArray());
+                    SetLabelValues(encodedData, "#ff0000");
+                }
+            }
+        }
+
 
         public void OnloadFunction()
         {
@@ -92,14 +144,14 @@ namespace WMDB
                 cmbDBName.DisplayMemberPath = dt.Columns[0].ToString();
                 cmbDBName.SelectedValuePath = dt.Columns[0].ToString();
                 cmbDBName.SelectedValue = dt.Columns[0].ToString();
-                SetLabelValues(LabelStatus, "", "");
+                SetLabelValues("", "");
                 StartButtonsGrid.Visibility = Visibility.Hidden;
                 UserSelectionGrid.Visibility = Visibility.Visible;
                 ViewSQLInDataGrid();
             }
             else
-            {
-                SetLabelValues(LabelStatus, "No values Found", "#ff0000");
+            {                
+                SetLabelValues("No values Found", "#ff0000");
             }
 
         }
@@ -138,13 +190,13 @@ namespace WMDB
                 cmbTableName.DisplayMemberPath = dt.Columns[0].ToString();
                 cmbTableName.SelectedValuePath = dt.Columns[0].ToString();
                 cmbTableName.SelectedValue = dt.Columns[0].ToString();
-                SetLabelValues(LabelStatus, "", "");
+                SetLabelValues("", "");
                 TableNameGrid.Visibility = Visibility.Visible;
                 ViewSQLInDataGrid();
             }
             else
             {
-                SetLabelValues(LabelStatus, "No values Found", "#ff0000");
+                SetLabelValues("No values Found", "#ff0000");
             }
         }
 
@@ -163,13 +215,13 @@ namespace WMDB
                     i++;
                 }
                 cmbColumnNames.ItemsSource = DtColumnNames;
-                SetLabelValues(LabelStatus, "", "");
+                SetLabelValues("", "");
                 ColumnNamesGrid.Visibility = Visibility.Visible;
                 ViewSQLInDataGrid();
             }
             else
             {
-                SetLabelValues(LabelStatus, "No values Found", "#ff0000");
+                SetLabelValues("No values Found", "#ff0000");
             }
         }
 
@@ -184,13 +236,13 @@ namespace WMDB
                 cmbColumnValue.DisplayMemberPath = dt.Columns[0].ToString();
                 cmbColumnValue.SelectedValuePath = dt.Columns[0].ToString();
                 //cmbColumnValue.SelectedValue = dt.Columns[0].ToString();
-                SetLabelValues(LabelStatus, "", "");
+                SetLabelValues("", "");
                 ColumnValuesGrid.Visibility = Visibility.Visible;
                 ViewSQLInDataGrid();
             }
             else
             {
-                SetLabelValues(LabelStatus, "No values Found", "#ff0000");
+                SetLabelValues("No values Found", "#ff0000");
             }
         }
 
@@ -206,20 +258,20 @@ namespace WMDB
             SqlDetailsGrid.Visibility = Visibility.Visible;
         }
 
-        public void SetLabelValues(Label Label, string Text, string color)
+        public void SetLabelValues(string Text, string color)
         {
             if (Text != "")
             {
-                Label.Content = Text;
+                LabelStatus.Content = Text;
             }
-            else { 
-                Label.Content = ""; 
+            else {
+                LabelStatus.Content = ""; 
             }
             if (color != "")
             {
                 var converter = new System.Windows.Media.BrushConverter();
                 var myBrush = (Brush)converter.ConvertFromString(color);
-                Label.Foreground = myBrush;
+                LabelStatus.Foreground = myBrush;
             }
         }
 

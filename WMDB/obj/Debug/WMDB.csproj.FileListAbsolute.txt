@@ -45,3 +45,4 @@ E:\WMDB\WMDB\obj\Debug\WMDB.g.resources
 E:\WMDB\WMDB\obj\Debug\WMDB.Properties.Resources.resources
 E:\WMDB\WMDB\obj\Debug\WMDB.csproj.GenerateResource.Cache
 D:\WPF\WMDB\WMDB\obj\Debug\WMDB.csprojResolveAssemblyReference.cache
+E:\WMDB\WMDB\obj\Debug\WMDB.csprojResolveAssemblyReference.cache
