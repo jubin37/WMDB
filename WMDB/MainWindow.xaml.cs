@@ -30,22 +30,26 @@ namespace WMDB
         {
             public string Database;
             public string Table;
-            public GetSetValues(string database, string tablename)
-            {
-                Database = database;
-                Table = tablename;
-            }
+            public string Column;
+            //public GetSetValues(string database, string tablename)
+            //{
+            //    Database = database;
+            //    Table = tablename;
+            //}
         };
 
         public MainWindow()
         {
             InitializeComponent();
+            SetButtonImage(btnClose, "/Images/close.png");
+            SetButtonImage(btnMinimize, "/Images/minimize.png");
+            SetButtonImage(btnHome, "/Images/Home.png");
             //https://www.aspsnippets.com/Articles/Encrypt-and-Decrypt-Username-or-Password-stored-in-database-in-ASPNet-using-C-and-VBNet.aspx
             //https://www.c-sharpcorner.com/blogs/how-to-encrypt-or-decrypt-password-using-asp-net-with-c-sharp1
             string pass = "µ¦´µ¦³’“”•";
-            EncodePasswordToBase64("Tester");
-            DecodeFrom64(pass.Trim());
-            //OnloadFunction();
+            //EncodePasswordToBase64("Tester");
+            //DecodeFrom64(pass.Trim());
+            OnloadFunction();
         }
 
         public void EncodePasswordToBase64(string password)
@@ -98,9 +102,7 @@ namespace WMDB
             HideGrid();
             StartButtonsGrid.Visibility = Visibility.Visible;
             UserSelectionGrid.Visibility = Visibility.Hidden;
-            SetButtonImage(btnClose, "/Images/close.png");
-            SetButtonImage(btnMinimize, "/Images/minimize.png");
-            SetButtonImage(btnHome, "/Images/Home.png");
+          
         }
 
         public ImageBrush BindImage(Image img, string ImagePath)
@@ -161,7 +163,7 @@ namespace WMDB
             Boolean status = false;
             if (dt != null)
             {
-                if (dt.Rows.Count > 1)
+                if (dt.Rows.Count > 0)
                 {
                     status = true; 
                 }
@@ -227,8 +229,9 @@ namespace WMDB
 
         private void cmbColumnNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string selectedColumnName = cmbColumnNames.SelectedValue.ToString();
-            string sql = "SELECT distinct(" + selectedColumnName + ") FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] order by " + selectedColumnName;
+            GSV.Column = cmbColumnNames.SelectedValue.ToString();
+            //string selectedColumnName = cmbColumnNames.SelectedValue.ToString();
+            string sql = "SELECT distinct(" + GSV.Column + ") FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] order by " + GSV.Column;
             GetValuesFromDB(sql, false);
             if (CheckValueExist(dt))
             {
@@ -248,7 +251,18 @@ namespace WMDB
 
         private void cmbColumnValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            string selectedColumnValue = cmbColumnValue.SelectedValue.ToString();
+            string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] where " + GSV.Column + "=" + selectedColumnValue;
+            GetValuesFromDB(sql, false);
+            if (CheckValueExist(dt))
+            {
+                SetLabelValues("", "");               
+                ViewSQLInDataGrid();
+            }
+            else
+            {
+                SetLabelValues("No values Found", "#ff0000");
+            }
         }
 
 
@@ -350,13 +364,7 @@ namespace WMDB
         {
             SqlDetailsGrid.Visibility = Visibility.Hidden;
             MyIspGrid.Visibility = Visibility.Hidden;
-
-            //DBandTableGrid.Visibility = Visibility.Hidden;
-            //DBNamesGrid.Visibility = Visibility.Hidden;
-            //TableNameGrid.Visibility = Visibility.Hidden;
-            //ColumnNamesAndValuesGrid.Visibility = Visibility.Hidden;
-            //ColumnNamesGrid.Visibility = Visibility.Hidden;
-            //ColumnValuesGrid.Visibility = Visibility.Hidden;
+                
 
         }
 
