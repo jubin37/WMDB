@@ -30,12 +30,8 @@ namespace WMDB
         {
             public string Database;
             public string Table;
-            public string Column;
-            //public GetSetValues(string database, string tablename)
-            //{
-            //    Database = database;
-            //    Table = tablename;
-            //}
+            public string ColumnName;
+            public string ColumnValue;
         };
 
         public MainWindow()
@@ -71,7 +67,7 @@ namespace WMDB
                     password = Convert.ToBase64String(ms.ToArray());
                     SetLabelValues(password, "#ff0000");
                 }
-            }        
+            }
         }
 
         public void DecodeFrom64(string encodedData)
@@ -96,13 +92,11 @@ namespace WMDB
             }
         }
 
-
         public void OnloadFunction()
         {
             HideGrid();
             StartButtonsGrid.Visibility = Visibility.Visible;
             UserSelectionGrid.Visibility = Visibility.Hidden;
-          
         }
 
         public ImageBrush BindImage(Image img, string ImagePath)
@@ -113,19 +107,43 @@ namespace WMDB
             return MyBrush;
         }
 
-
         private void GetValuesFromDB(string sql, Boolean GetLastEntry)
         {
-            string cs = @"Server = (local); Database =''; Trusted_Connection = Yes; ";
-            SqlConnection con = new SqlConnection(cs);
-            SqlCommand cmd = new SqlCommand(sql, con);
-            SqlDataAdapter sda = new SqlDataAdapter(cmd);
-            con.Open();
-            dt = new DataTable();
-            sda.Fill(dt);
-            if (GetLastEntry == true)
+            try
             {
-
+                string cs = @"Server = (local); Database =''; Trusted_Connection = Yes; ";
+                SqlConnection con = new SqlConnection(cs);
+                SqlCommand cmd = new SqlCommand(sql, con);
+                SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                con.Open();
+                dt = new DataTable();
+                sda.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                LabelStatus.Content = "Error in Function GetValuesFromDB " + ex.Message;
+            }
+            finally
+            {
+                if (dt != null)
+                {
+                    if (dt.Rows.Count > 0)
+                    {
+                        ViewSQLInDataGrid();
+                    }
+                    else
+                    {
+                        SqlDetailsGrid.Visibility = Visibility.Hidden;
+                        LabelStatus.Content = "No values found";
+                        LabelStatus.Foreground = Brushes.DarkRed;
+                    }
+                }
+                else
+                {
+                    SqlDetailsGrid.Visibility = Visibility.Hidden;
+                    LabelStatus.Content = "No values found";
+                    LabelStatus.Foreground = Brushes.DarkRed;
+                }
             }
         }
 
@@ -140,66 +158,30 @@ namespace WMDB
             MyIspGrid.Visibility = Visibility.Hidden;
             string sql = "SELECT name FROM sys.databases order by name";
             GetValuesFromDB(sql, false);
-            if (CheckValueExist(dt))
-            {
-                cmbDBName.ItemsSource = dt.AsDataView();
-                cmbDBName.DisplayMemberPath = dt.Columns[0].ToString();
-                cmbDBName.SelectedValuePath = dt.Columns[0].ToString();
-                cmbDBName.SelectedValue = dt.Columns[0].ToString();
-                SetLabelValues("", "");
-                StartButtonsGrid.Visibility = Visibility.Hidden;
-                UserSelectionGrid.Visibility = Visibility.Visible;
-                ViewSQLInDataGrid();
-            }
-            else
-            {                
-                SetLabelValues("No values Found", "#ff0000");
-            }
+            FillComboBox(cmbDBName);
+            StartButtonsGrid.Visibility = Visibility.Hidden;
+            UserSelectionGrid.Visibility = Visibility.Visible;
+        }
+
+        public void DisplayCombobox(ComboBox combobox) 
+        { 
 
         }
 
-        public bool CheckValueExist(DataTable dt)
+        public void FillComboBox(ComboBox combobox)
         {
-            Boolean status = false;
-            if (dt != null)
-            {
-                if (dt.Rows.Count > 0)
-                {
-                    status = true; 
-                }
-                else
-                { 
-                    SqlDetailsGrid.Visibility = Visibility.Hidden; 
-                    status = false; 
-                }                
-            }
-            else 
-            { 
-                SqlDetailsGrid.Visibility = Visibility.Hidden; 
-                status = false; 
-            }
-            return status;
+            combobox.ItemsSource = dt.AsDataView();
+            combobox.DisplayMemberPath = dt.Columns[0].ToString();
+            combobox.SelectedValuePath = dt.Columns[0].ToString();
         }
 
         private void cmbDBName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             GSV.Database = cmbDBName.SelectedValue.ToString();
             string sql = "SELECT name FROM " + GSV.Database + ".sys.tables order by name";
-            GetValuesFromDB(sql, false);
-            if (CheckValueExist(dt))
-            {
-                cmbTableName.ItemsSource = dt.AsDataView();
-                cmbTableName.DisplayMemberPath = dt.Columns[0].ToString();
-                cmbTableName.SelectedValuePath = dt.Columns[0].ToString();
-                cmbTableName.SelectedValue = dt.Columns[0].ToString();
-                SetLabelValues("", "");
-                TableNameGrid.Visibility = Visibility.Visible;
-                ViewSQLInDataGrid();
-            }
-            else
-            {
-                SetLabelValues("No values Found", "#ff0000");
-            }
+            GetValuesFromDB(sql, false);           
+            FillComboBox(cmbTableName);         
+            TableNameGrid.Visibility = Visibility.Visible;
         }
 
         private void cmbTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -207,64 +189,32 @@ namespace WMDB
             GSV.Table = cmbTableName.SelectedValue.ToString();
             string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
             GetValuesFromDB(sql, true);
-            if (CheckValueExist(dt))
+            int i = 0;
+            string[] DtColumnNames = new string[dt.Columns.Count];
+            foreach (DataColumn dc in dt.Columns)
             {
-                int i = 0;
-                string[] DtColumnNames = new string[dt.Columns.Count];
-                foreach (DataColumn dc in dt.Columns)
-                {
-                    DtColumnNames[i] = dc.ColumnName.ToString();
-                    i++;
-                }
-                cmbColumnNames.ItemsSource = DtColumnNames;
-                SetLabelValues("", "");
-                ColumnNamesGrid.Visibility = Visibility.Visible;
-                ViewSQLInDataGrid();
+                DtColumnNames[i] = dc.ColumnName.ToString();
+                i++;
             }
-            else
-            {
-                SetLabelValues("No values Found", "#ff0000");
-            }
+            cmbColumnNames.ItemsSource = DtColumnNames;
+            ColumnNamesGrid.Visibility = Visibility.Visible;
         }
 
         private void cmbColumnNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GSV.Column = cmbColumnNames.SelectedValue.ToString();
-            //string selectedColumnName = cmbColumnNames.SelectedValue.ToString();
-            string sql = "SELECT distinct(" + GSV.Column + ") FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] order by " + GSV.Column;
+            GSV.ColumnName = cmbColumnNames.SelectedValue.ToString();
+            string sql = "SELECT distinct(" + GSV.ColumnName + ") FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] order by " + GSV.ColumnName;
             GetValuesFromDB(sql, false);
-            if (CheckValueExist(dt))
-            {
-                cmbColumnValue.ItemsSource = dt.AsDataView();
-                cmbColumnValue.DisplayMemberPath = dt.Columns[0].ToString();
-                cmbColumnValue.SelectedValuePath = dt.Columns[0].ToString();
-                //cmbColumnValue.SelectedValue = dt.Columns[0].ToString();
-                SetLabelValues("", "");
-                ColumnValuesGrid.Visibility = Visibility.Visible;
-                ViewSQLInDataGrid();
-            }
-            else
-            {
-                SetLabelValues("No values Found", "#ff0000");
-            }
+            FillComboBox(cmbColumnValue);               
+            ColumnValuesGrid.Visibility = Visibility.Visible;
         }
 
         private void cmbColumnValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string selectedColumnValue = cmbColumnValue.SelectedValue.ToString();
-            string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] where " + GSV.Column + "=" + selectedColumnValue;
+            GSV.ColumnValue = cmbColumnValue.SelectedValue.ToString();
+            string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] where " + GSV.ColumnName + "='" + GSV.ColumnValue + "'";
             GetValuesFromDB(sql, false);
-            if (CheckValueExist(dt))
-            {
-                SetLabelValues("", "");               
-                ViewSQLInDataGrid();
-            }
-            else
-            {
-                SetLabelValues("No values Found", "#ff0000");
-            }
         }
-
 
         public void ViewSQLInDataGrid()
         {
@@ -278,8 +228,9 @@ namespace WMDB
             {
                 LabelStatus.Content = Text;
             }
-            else {
-                LabelStatus.Content = ""; 
+            else
+            {
+                LabelStatus.Content = "";
             }
             if (color != "")
             {
@@ -306,6 +257,11 @@ namespace WMDB
 
         }
 
+
+        private void btnSearchDB_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
 
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -364,8 +320,35 @@ namespace WMDB
         {
             SqlDetailsGrid.Visibility = Visibility.Hidden;
             MyIspGrid.Visibility = Visibility.Hidden;
-                
+        }
 
+
+    public bool CheckValueExist(DataTable dt)
+        {
+            LabelStatus.Content = "";
+            Boolean status = false;
+            if (dt != null)
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    status = true;
+                }
+                else
+                {
+                    SqlDetailsGrid.Visibility = Visibility.Hidden;
+                    LabelStatus.Content = "No values found";
+                    LabelStatus.Foreground = Brushes.DarkRed;
+                    status = false;
+                }
+            }
+            else
+            {
+                SqlDetailsGrid.Visibility = Visibility.Hidden;
+                LabelStatus.Content = "No values found";
+                LabelStatus.Foreground = Brushes.DarkRed;
+                status = false;
+            }
+            return status;
         }
 
 

@@ -45,21 +45,23 @@
                         <RowDefinition Height="55*"></RowDefinition>
                         <RowDefinition Height="5*"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <Grid Name="StartButtonsGrid" Visibility="Hidden">
+                    <Grid Name="StartButtonsGrid">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50*"></ColumnDefinition>
-                            <ColumnDefinition Width="50*"></ColumnDefinition>
+                            <ColumnDefinition Width="33*"></ColumnDefinition>
+                            <ColumnDefinition Width="33*"></ColumnDefinition>
+                            <ColumnDefinition Width="33*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="50*"></RowDefinition>
                             <RowDefinition Height="50*"></RowDefinition>
                         </Grid.RowDefinitions>
-                        <Button Height="40" Name="btnGetDBName" FontSize="15pt" Click="btnGetDBName_Click" Content="Get DBList" Width="180"  TabIndex="0" />
-                        <Button Height="40" Name="btnKnowISP" FontSize="15pt" Click="btnKnowISP_Click" Content="My ISP" Width="180" Grid.Column="1" TabIndex="1" />
-                        <Button Height="40" Name="btnDecrypt" FontSize="15pt" Click="btnDecrypt_Click" Content="Decrypt Password" Width="180" Grid.Row="1" TabIndex="2" />
-                        <Button Height="40" Name="btnEncrypt" FontSize="15pt" Click="btnEncrypt_Click" Content="Encrypt Password" Width="180" Grid.Row="1" Grid.Column="1" TabIndex="3" />
+                        <Button Height="40" Name="btnGetDBName" FontSize="15pt" Click="btnGetDBName_Click" Content="Get DBList" Width="180" TabIndex="0" />
+                        <Button Height="40" Name="btnSearchDB" FontSize="15pt" Click="btnSearchDB_Click" Content="Serch in DB" Width="180" Grid.Column="1" TabIndex="1" />
+                        <Button Height="40" Name="btnKnowISP" FontSize="15pt" Click="btnKnowISP_Click" Content="My ISP" Width="180" Grid.Column="2" TabIndex="2" />
+                        <Button Height="40" Name="btnDecrypt" FontSize="15pt" Click="btnDecrypt_Click" Content="Decrypt Password" Width="180" Grid.Row="1" TabIndex="3" />
+                        <Button Height="40" Name="btnEncrypt" FontSize="15pt" Click="btnEncrypt_Click" Content="Encrypt Password" Width="180" Grid.Row="1" Grid.Column="1" TabIndex="4" />
                     </Grid>
-                    <Grid Name="UserSelectionGrid">
+                    <Grid Name="UserSelectionGrid" Visibility="Hidden">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50*" />
                             <ColumnDefinition Width="50*" />
