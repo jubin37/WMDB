@@ -46,51 +46,7 @@ namespace WMDB
             //EncodePasswordToBase64("Tester");
             //DecodeFrom64(pass.Trim());
             OnloadFunction();
-        }
-
-        public void EncodePasswordToBase64(string password)
-        {
-            string EncryptionKey = "MAKV2SPBNI99212";
-            byte[] clearBytes = Encoding.Unicode.GetBytes(password);
-            using (Aes encryptor = Aes.Create())
-            {
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(clearBytes, 0, clearBytes.Length);
-                        cs.Close();
-                    }
-                    password = Convert.ToBase64String(ms.ToArray());
-                    SetLabelValues(password, "#ff0000");
-                }
-            }
-        }
-
-        public void DecodeFrom64(string encodedData)
-        {
-            string EncryptionKey = "MAKV2SPBNI99212";
-            byte[] cipherBytes = Convert.FromBase64String(encodedData);
-            using (Aes encryptor = Aes.Create())
-            {
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(cipherBytes, 0, cipherBytes.Length);
-                        cs.Close();
-                    }
-                    encodedData = Encoding.Unicode.GetString(ms.ToArray());
-                    SetLabelValues(encodedData, "#ff0000");
-                }
-            }
-        }
+        }        
 
         public void OnloadFunction()
         {
@@ -170,9 +126,27 @@ namespace WMDB
 
         public void FillComboBox(ComboBox combobox)
         {
-            combobox.ItemsSource = dt.AsDataView();
-            combobox.DisplayMemberPath = dt.Columns[0].ToString();
-            combobox.SelectedValuePath = dt.Columns[0].ToString();
+            try
+            {
+                combobox.Items.Clear();
+                //int i = 0;
+                //string[] DtColumnNames = new string[dt.Columns.Count];
+                //foreach (DataColumn dc in dt.Columns)
+                //{
+                //    DtColumnNames[i] = dc.ColumnName.ToString();
+                //    i++;
+                //}
+                combobox.ItemsSource = dt.DefaultView;
+                combobox.DisplayMemberPath = dt.Columns[0].ToString();
+                combobox.SelectedValuePath = dt.Columns[0].ToString();
+                combobox.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                SqlDetailsGrid.Visibility = Visibility.Hidden;
+                LabelStatus.Content = ex.Message;
+                LabelStatus.Foreground = Brushes.DarkRed;
+            }
         }
 
         private void cmbDBName_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -189,6 +163,7 @@ namespace WMDB
             GSV.Table = cmbTableName.SelectedValue.ToString();
             string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
             GetValuesFromDB(sql, true);
+            //FillComboBox(cmbColumnNames);
             int i = 0;
             string[] DtColumnNames = new string[dt.Columns.Count];
             foreach (DataColumn dc in dt.Columns)
@@ -206,7 +181,7 @@ namespace WMDB
             string sql = "SELECT distinct(" + GSV.ColumnName + ") FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] order by " + GSV.ColumnName;
             GetValuesFromDB(sql, false);
             FillComboBox(cmbColumnValue);               
-            ColumnValuesGrid.Visibility = Visibility.Visible;
+            //ColumnValuesGrid.Visibility = Visibility.Visible;
         }
 
         private void cmbColumnValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -350,7 +325,49 @@ namespace WMDB
             }
             return status;
         }
+    public void EncodePasswordToBase64(string password)
+    {
+        string EncryptionKey = "MAKV2SPBNI99212";
+        byte[] clearBytes = Encoding.Unicode.GetBytes(password);
+        using (Aes encryptor = Aes.Create())
+        {
+            Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+            encryptor.Key = pdb.GetBytes(32);
+            encryptor.IV = pdb.GetBytes(16);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                {
+                    cs.Write(clearBytes, 0, clearBytes.Length);
+                    cs.Close();
+                }
+                password = Convert.ToBase64String(ms.ToArray());
+                SetLabelValues(password, "#ff0000");
+            }
+        }
+    }
 
+    public void DecodeFrom64(string encodedData)
+    {
+        string EncryptionKey = "MAKV2SPBNI99212";
+        byte[] cipherBytes = Convert.FromBase64String(encodedData);
+        using (Aes encryptor = Aes.Create())
+        {
+            Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+            encryptor.Key = pdb.GetBytes(32);
+            encryptor.IV = pdb.GetBytes(16);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                {
+                    cs.Write(cipherBytes, 0, cipherBytes.Length);
+                    cs.Close();
+                }
+                encodedData = Encoding.Unicode.GetString(ms.ToArray());
+                SetLabelValues(encodedData, "#ff0000");
+            }
+        }
+    }
 
     }
 }
