@@ -46,7 +46,7 @@ namespace WMDB
             //EncodePasswordToBase64("Tester");
             //DecodeFrom64(pass.Trim());
             OnloadFunction();
-        }        
+        }
 
         public void OnloadFunction()
         {
@@ -114,81 +114,121 @@ namespace WMDB
             MyIspGrid.Visibility = Visibility.Hidden;
             string sql = "SELECT name FROM sys.databases order by name";
             GetValuesFromDB(sql, false);
-            FillComboBox(cmbDBName);
-            StartButtonsGrid.Visibility = Visibility.Hidden;
-            UserSelectionGrid.Visibility = Visibility.Visible;
+            if (FillComboBox(cmbDBName, false) == true)
+            {
+                StartButtonsGrid.Visibility = Visibility.Hidden;
+                UserSelectionGrid.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                StartButtonsGrid.Visibility = Visibility.Visible;
+                UserSelectionGrid.Visibility = Visibility.Hidden;
+            }
         }
 
-        public void DisplayCombobox(ComboBox combobox) 
-        { 
-
-        }
-
-        public void FillComboBox(ComboBox combobox)
+        public Boolean FillComboBox(ComboBox combobox, Boolean GetColumnNames)
         {
+            Boolean ComboBoxUpdated = true;
             try
             {
-                combobox.Items.Clear();
-                //int i = 0;
-                //string[] DtColumnNames = new string[dt.Columns.Count];
-                //foreach (DataColumn dc in dt.Columns)
-                //{
-                //    DtColumnNames[i] = dc.ColumnName.ToString();
-                //    i++;
-                //}
-                combobox.ItemsSource = dt.DefaultView;
-                combobox.DisplayMemberPath = dt.Columns[0].ToString();
-                combobox.SelectedValuePath = dt.Columns[0].ToString();
-                combobox.Visibility = Visibility.Visible;
+                LabelStatus.Content = "";
+                if (GetColumnNames == true)
+                {
+                    int i = 0;
+                    string[] DtColumnNames = new string[dt.Columns.Count];
+                    foreach (DataColumn dc in dt.Columns)
+                    {
+                        DtColumnNames[i] = dc.ColumnName.ToString();
+                        i++;
+                    }
+                    combobox.ItemsSource = DtColumnNames;
+                    combobox.Visibility = Visibility.Visible;
+                }
+                else
+                {                  
+                    combobox.ItemsSource = dt.DefaultView;
+                    combobox.DisplayMemberPath = dt.Columns[0].ToString();
+                    combobox.SelectedValuePath = dt.Columns[0].ToString();
+                    combobox.Visibility = Visibility.Visible;
+                }
+                ComboBoxUpdated = true;
             }
             catch (Exception ex)
             {
+                ComboBoxUpdated = false;
                 SqlDetailsGrid.Visibility = Visibility.Hidden;
                 LabelStatus.Content = ex.Message;
+                LabelStatus.FontSize = 10;
                 LabelStatus.Foreground = Brushes.DarkRed;
             }
+            return ComboBoxUpdated;
         }
 
         private void cmbDBName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GSV.Database = cmbDBName.SelectedValue.ToString();
-            string sql = "SELECT name FROM " + GSV.Database + ".sys.tables order by name";
-            GetValuesFromDB(sql, false);           
-            FillComboBox(cmbTableName);         
-            TableNameGrid.Visibility = Visibility.Visible;
+            if (cmbDBName.SelectedValue != null)
+            {
+                GSV.Database = cmbDBName.SelectedValue.ToString();
+                string sql = "SELECT name FROM " + GSV.Database + ".sys.tables order by name";
+                GetValuesFromDB(sql, false);
+                if (FillComboBox(cmbTableName, false) == true)
+                {
+                    TableNameGrid.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    TableNameGrid.Visibility = Visibility.Hidden;
+                }
+            }
+            ColumnNamesGrid.Visibility = Visibility.Hidden;
+            ColumnValuesGrid.Visibility = Visibility.Hidden;
         }
 
         private void cmbTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GSV.Table = cmbTableName.SelectedValue.ToString();
-            string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
-            GetValuesFromDB(sql, true);
-            //FillComboBox(cmbColumnNames);
-            int i = 0;
-            string[] DtColumnNames = new string[dt.Columns.Count];
-            foreach (DataColumn dc in dt.Columns)
+            if (cmbTableName.SelectedValue != null)
             {
-                DtColumnNames[i] = dc.ColumnName.ToString();
-                i++;
+                GSV.Table = cmbTableName.SelectedValue.ToString();
+                string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "]";
+                GetValuesFromDB(sql, true);
+                if (FillComboBox(cmbColumnNames, true) == true)
+                {
+                    ColumnNamesGrid.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ColumnNamesGrid.Visibility = Visibility.Hidden;
+                }
             }
-            cmbColumnNames.ItemsSource = DtColumnNames;
-            ColumnNamesGrid.Visibility = Visibility.Visible;
+            ColumnValuesGrid.Visibility = Visibility.Hidden;
         }
 
         private void cmbColumnNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GSV.ColumnName = cmbColumnNames.SelectedValue.ToString();
-            string sql = "SELECT distinct(" + GSV.ColumnName + ") FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] order by " + GSV.ColumnName;
-            GetValuesFromDB(sql, false);
-            FillComboBox(cmbColumnValue);               
-            //ColumnValuesGrid.Visibility = Visibility.Visible;
+            if (cmbColumnNames.SelectedValue != null)
+            {
+                GSV.ColumnName = cmbColumnNames.SelectedValue.ToString();
+                string sql = "SELECT distinct(" + GSV.ColumnName + ") FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] order by " + GSV.ColumnName;
+                GetValuesFromDB(sql, false);
+                if (FillComboBox(cmbColumnValue, false) == true)
+                {
+                    ColumnValuesGrid.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ColumnValuesGrid.Visibility = Visibility.Hidden;
+                }
+            }
         }
 
         private void cmbColumnValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GSV.ColumnValue = cmbColumnValue.SelectedValue.ToString();
-            string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] where " + GSV.ColumnName + "='" + GSV.ColumnValue + "'";
-            GetValuesFromDB(sql, false);
+            if (cmbColumnValue.SelectedValue != null)
+            {
+                GSV.ColumnValue = cmbColumnValue.SelectedValue.ToString();
+                string sql = "SELECT * FROM [" + GSV.Database + "].[dbo].[" + GSV.Table + "] where " + GSV.ColumnName + "='" + GSV.ColumnValue + "'";
+                GetValuesFromDB(sql, false);
+            }
         }
 
         public void ViewSQLInDataGrid()
@@ -298,7 +338,7 @@ namespace WMDB
         }
 
 
-    public bool CheckValueExist(DataTable dt)
+        public bool CheckValueExist(DataTable dt)
         {
             LabelStatus.Content = "";
             Boolean status = false;
@@ -325,49 +365,49 @@ namespace WMDB
             }
             return status;
         }
-    public void EncodePasswordToBase64(string password)
-    {
-        string EncryptionKey = "MAKV2SPBNI99212";
-        byte[] clearBytes = Encoding.Unicode.GetBytes(password);
-        using (Aes encryptor = Aes.Create())
+        public void EncodePasswordToBase64(string password)
         {
-            Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
-            encryptor.Key = pdb.GetBytes(32);
-            encryptor.IV = pdb.GetBytes(16);
-            using (MemoryStream ms = new MemoryStream())
+            string EncryptionKey = "MAKV2SPBNI99212";
+            byte[] clearBytes = Encoding.Unicode.GetBytes(password);
+            using (Aes encryptor = Aes.Create())
             {
-                using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    cs.Write(clearBytes, 0, clearBytes.Length);
-                    cs.Close();
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(clearBytes, 0, clearBytes.Length);
+                        cs.Close();
+                    }
+                    password = Convert.ToBase64String(ms.ToArray());
+                    SetLabelValues(password, "#ff0000");
                 }
-                password = Convert.ToBase64String(ms.ToArray());
-                SetLabelValues(password, "#ff0000");
             }
         }
-    }
 
-    public void DecodeFrom64(string encodedData)
-    {
-        string EncryptionKey = "MAKV2SPBNI99212";
-        byte[] cipherBytes = Convert.FromBase64String(encodedData);
-        using (Aes encryptor = Aes.Create())
+        public void DecodeFrom64(string encodedData)
         {
-            Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
-            encryptor.Key = pdb.GetBytes(32);
-            encryptor.IV = pdb.GetBytes(16);
-            using (MemoryStream ms = new MemoryStream())
+            string EncryptionKey = "MAKV2SPBNI99212";
+            byte[] cipherBytes = Convert.FromBase64String(encodedData);
+            using (Aes encryptor = Aes.Create())
             {
-                using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    cs.Write(cipherBytes, 0, cipherBytes.Length);
-                    cs.Close();
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(cipherBytes, 0, cipherBytes.Length);
+                        cs.Close();
+                    }
+                    encodedData = Encoding.Unicode.GetString(ms.ToArray());
+                    SetLabelValues(encodedData, "#ff0000");
                 }
-                encodedData = Encoding.Unicode.GetString(ms.ToArray());
-                SetLabelValues(encodedData, "#ff0000");
             }
         }
-    }
 
     }
 }
