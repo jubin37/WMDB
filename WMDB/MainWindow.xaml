@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WMDB"
         mc:Ignorable="d"
-        Title="MainWindow" Background="#273547" Height="700" Width="950" WindowStyle="None" MouseDown="Window_MouseDown" WindowStartupLocation="CenterScreen" >
+        Title="WMDB" Background="#273547" Height="700" Width="950" WindowStyle="None" MouseDown="Window_MouseDown" WindowStartupLocation="CenterScreen" >
     <Grid Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20*"></ColumnDefinition>
@@ -17,8 +17,29 @@
                 <RowDefinition Height="80*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid>
-                <Button Width="100" Height="100" Name="btnHome" Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Click="btnHome_Click" TabIndex="0" />
+                <Label Name="lblHeading" Style="{StaticResource LabelHeading}" Foreground="#F5F5F5" HorizontalContentAlignment="Center" Content="WMDB" />
             </Grid>
+            <Grid Name="NavigationButonsGrid" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20*"></RowDefinition>
+                    <RowDefinition Height="20*"></RowDefinition>
+                    <RowDefinition Height="20*"></RowDefinition>
+                    <RowDefinition Height="20*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Name="BtnHomeGrid">
+                    <Button Width="100" Height="100" Name="btnHome" Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Click="btnHome_Click" TabIndex="0" />
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Button Width="100" Height="100" Name="btnRefresh" Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Click="btnRefresh_Click" TabIndex="0" />
+                </Grid>
+                <Grid Grid.Row="2">
+                    <Button Width="100" Height="100" Name="btnViewQuery" Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Click="btnViewQuery_Click" TabIndex="0" />
+                </Grid>
+                <Grid Grid.Row="3">
+                    <Button Width="100" Height="100" Name="btnCopyQuery" Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Click="btnCopyQuery_Click" TabIndex="0" />
+                </Grid>
+            </Grid>
+
         </Grid>
         <Grid Name="CenterGrid" Background="#F5F5FA" Grid.Column="1">
             <Grid Name="TitleAndDynamicGrid">
@@ -28,24 +49,23 @@
                 </Grid.RowDefinitions>
                 <Grid Name="TitleBarGrid">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="80*"></ColumnDefinition>
-                        <ColumnDefinition Width="4*"></ColumnDefinition>
-                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                        <ColumnDefinition Width="4*"></ColumnDefinition>
+                        <ColumnDefinition Width="90*"></ColumnDefinition>
+                        <ColumnDefinition Width="5*"></ColumnDefinition>
+                        <ColumnDefinition Width="5*"></ColumnDefinition>
                         <ColumnDefinition Width="1*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Label Name="lblHeading" Style="{StaticResource LabelRequerStyle1}" HorizontalContentAlignment="Center" Content="WMDB" />
                     <Button Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Name="btnMinimize" Click="btnMinimize_Click" Grid.Column="1"></Button>
-                    <Button Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Name="btnClose" Click="btnClose_Click" Grid.Column="3"></Button>
+                    <Button Background="Transparent" BorderBrush="Transparent" Style="{DynamicResource RoundedButton}" Name="btnClose" Click="btnClose_Click" Grid.Column="2"></Button>
                 </Grid>
                 <Grid Name="DynamicGrid" Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="25*"></RowDefinition>
                         <RowDefinition Height="10*"></RowDefinition>
-                        <RowDefinition Height="55*"></RowDefinition>
+                        <RowDefinition Height="5*"></RowDefinition>
+                        <RowDefinition Height="50*"></RowDefinition>
                         <RowDefinition Height="5*"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <Grid Name="StartButtonsGrid">
+                    <Grid Name="StartButtonsGrid" Visibility="Hidden">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="33*"></ColumnDefinition>
                             <ColumnDefinition Width="33*"></ColumnDefinition>
@@ -88,7 +108,7 @@
                                 <ColumnDefinition Width="55*"></ColumnDefinition>
                                 <ColumnDefinition Width="5*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Label Style="{StaticResource SmallLabelStyle}" Name="lblScreenName">
+                            <Label Style="{StaticResource SmallLabelStyle}" Name="lblTableName">
                                 <Label.Content>
                                     <AccessText TextWrapping="Wrap" TextAlignment="Left" Text="Select Table Name"/>
                                 </Label.Content>
@@ -104,7 +124,7 @@
                                 <Label.Content>
                                     <AccessText TextWrapping="Wrap" TextAlignment="Left" Text="Select Column Name"/>
                                 </Label.Content>
-                            </Label> 
+                            </Label>
                             <ComboBox Name="cmbColumnNames" Text="Select Item" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbColumnNames_SelectionChanged" Grid.Column="1" TabIndex="2" />
                         </Grid>
                         <Grid Name="ColumnValuesGrid" Grid.Row="1" Grid.Column="1" Visibility="Hidden" >
@@ -122,7 +142,42 @@
                         </Grid>
                     </Grid>
 
-                    <Grid Name="InfoGrid" Grid.Row="1">
+                    <Grid Name="FilterationGrid" Grid.Row="1" Visibility="Hidden">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="33*"></ColumnDefinition>
+                            <ColumnDefinition Width="33*"></ColumnDefinition>
+                            <ColumnDefinition Width="33*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid Name="GroupByGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50*"></RowDefinition>
+                                <RowDefinition Height="50*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Label Style="{StaticResource SmallLabelStyle}" Name="lblGroupBy">
+                                <Label.Content>
+                                    <AccessText TextWrapping="Wrap" TextAlignment="Left" Text="Group By"/>
+                                </Label.Content>
+                            </Label>
+                            <ComboBox Name="cmbGroupBy" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbGroupBy_SelectionChanged" Width="200" Grid.Row="1" TabIndex="3" />
+                        </Grid>
+                        <Grid Name="EnterSearchGrid" Grid.Column="1">
+                            
+                        </Grid>
+                        <Grid Name="OrderByGrid" Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50*"></RowDefinition>
+                                <RowDefinition Height="50*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Label Style="{StaticResource SmallLabelStyle}" Name="lblOrderBy">
+                                <Label.Content>
+                                    <AccessText TextWrapping="Wrap" TextAlignment="Left" Text="Order By"/>
+                                </Label.Content>
+                            </Label>
+                            <ComboBox Name="cmbOrderBy" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbOrderBy_SelectionChanged" Width="200" Grid.Row="1" TabIndex="3" />
+
+                        </Grid>
+                        </Grid>
+                    <Grid Name="InfoGrid" Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="10*"></ColumnDefinition>
                             <ColumnDefinition Width="80*"></ColumnDefinition>
@@ -139,13 +194,13 @@
                         </Grid>
                         <Label Name="LabelLastEntry" Style="{StaticResource SmallLabelStyle}" Grid.Column="2"></Label>
                     </Grid>
-                    <Grid Name="SqlDetailsGrid" Grid.Row="2" Visibility="Hidden">
+                    <Grid Name="SqlDetailsGrid" Grid.Row="3" Visibility="Hidden">
                         <DataGrid Name="SqlDataGrid"/>
                     </Grid>
-                    <Grid Name="MyIspGrid" Grid.Row="2" Visibility="Hidden">
+                    <Grid Name="MyIspGrid" Grid.Row="3" Visibility="Hidden">
                         <WebBrowser Name="MyIspWB" />
                     </Grid>
-                    <Grid Name="ProgressBarGrid" Grid.Row="3">
+                    <Grid Name="ProgressBarGrid" Grid.Row="4">
                         <ProgressBar Name="prgbar" Minimum="0" Maximum="100"/>
                         <TextBlock Text="{Binding ElementName=prgbar, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Grid>

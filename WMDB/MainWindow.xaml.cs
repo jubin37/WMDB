@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Security.Cryptography;
+using System.Web;
+using System.Net;
 
 namespace WMDB
 {
@@ -25,6 +27,7 @@ namespace WMDB
         DataTable dt = new DataTable();
         DataSet ds = new DataSet();
         GetSetValues GSV = new GetSetValues();
+        string SqlQueryToView = "";
 
         struct GetSetValues
         {
@@ -40,11 +43,9 @@ namespace WMDB
             SetButtonImage(btnClose, "/Images/close.png");
             SetButtonImage(btnMinimize, "/Images/minimize.png");
             SetButtonImage(btnHome, "/Images/Home.png");
-            //https://www.aspsnippets.com/Articles/Encrypt-and-Decrypt-Username-or-Password-stored-in-database-in-ASPNet-using-C-and-VBNet.aspx
-            //https://www.c-sharpcorner.com/blogs/how-to-encrypt-or-decrypt-password-using-asp-net-with-c-sharp1
-            string pass = "µ¦´µ¦³’“”•";
-            //EncodePasswordToBase64("Tester");
-            //DecodeFrom64(pass.Trim());
+            SetButtonImage(btnRefresh, "/Images/Refresh.png");
+            SetButtonImage(btnViewQuery, "/Images/View.png");
+            SetButtonImage(btnCopyQuery, "/Images/Copy.png");
             OnloadFunction();
         }
 
@@ -53,6 +54,9 @@ namespace WMDB
             HideGrid();
             StartButtonsGrid.Visibility = Visibility.Visible;
             UserSelectionGrid.Visibility = Visibility.Hidden;
+            NavigationButonsGrid.Visibility = Visibility.Hidden;
+            LabelStatus.Content = "";
+            LabelLastEntry.Content = "";
         }
 
         public ImageBrush BindImage(Image img, string ImagePath)
@@ -67,6 +71,7 @@ namespace WMDB
         {
             try
             {
+                SqlQueryToView = sql;
                 string cs = @"Server = (local); Database =''; Trusted_Connection = Yes; ";
                 SqlConnection con = new SqlConnection(cs);
                 SqlCommand cmd = new SqlCommand(sql, con);
@@ -111,6 +116,7 @@ namespace WMDB
         private void btnGetDBName_Click(object sender, RoutedEventArgs e)
         {
             HideGrid();
+            NavigationButonsGrid.Visibility = Visibility.Visible;
             MyIspGrid.Visibility = Visibility.Hidden;
             string sql = "SELECT name FROM sys.databases order by name";
             GetValuesFromDB(sql, false);
@@ -145,7 +151,7 @@ namespace WMDB
                     combobox.Visibility = Visibility.Visible;
                 }
                 else
-                {                  
+                {
                     combobox.ItemsSource = dt.DefaultView;
                     combobox.DisplayMemberPath = dt.Columns[0].ToString();
                     combobox.SelectedValuePath = dt.Columns[0].ToString();
@@ -335,6 +341,9 @@ namespace WMDB
         {
             SqlDetailsGrid.Visibility = Visibility.Hidden;
             MyIspGrid.Visibility = Visibility.Hidden;
+            cmbTableName.Visibility = Visibility.Hidden;
+            cmbColumnValue.Visibility = Visibility.Hidden;
+            cmbColumnNames.Visibility = Visibility.Hidden;
         }
 
 
@@ -365,6 +374,7 @@ namespace WMDB
             }
             return status;
         }
+
         public void EncodePasswordToBase64(string password)
         {
             string EncryptionKey = "MAKV2SPBNI99212";
@@ -407,6 +417,37 @@ namespace WMDB
                     SetLabelValues(encodedData, "#ff0000");
                 }
             }
+        }
+
+        private void btnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            GetValuesFromDB(SqlQueryToView, false);
+        }
+
+        private void btnViewQuery_Click(object sender, RoutedEventArgs e)
+        {
+            LabelStatus.Content = SqlQueryToView;
+            LabelStatus.Foreground = Brushes.Green;
+        }
+
+        private void btnCopyQuery_Click(object sender, RoutedEventArgs e)
+        {
+            if (SqlQueryToView != "")
+            {
+                System.Windows.Forms.Clipboard.SetText(SqlQueryToView);
+                LabelStatus.Content = "Copied to Clip Board";
+                LabelStatus.Foreground = Brushes.Green;
+            }
+        }
+
+        private void cmbGroupBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void cmbOrderBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
 
     }
