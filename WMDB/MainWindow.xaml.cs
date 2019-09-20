@@ -56,7 +56,6 @@ namespace WMDB
             UserSelectionGrid.Visibility = Visibility.Hidden;
             NavigationButonsGrid.Visibility = Visibility.Hidden;
             LabelStatus.Content = "";
-            LabelLastEntry.Content = "";
         }
 
         public ImageBrush BindImage(Image img, string ImagePath)
@@ -116,6 +115,8 @@ namespace WMDB
         private void btnGetDBName_Click(object sender, RoutedEventArgs e)
         {
             HideGrid();
+            //var bc = new BrushConverter();
+            //NavigationGrid.Background = (Brush)bc.ConvertFrom("#273547");
             NavigationButonsGrid.Visibility = Visibility.Visible;
             MyIspGrid.Visibility = Visibility.Hidden;
             string sql = "SELECT name FROM sys.databases order by name";
@@ -324,7 +325,6 @@ namespace WMDB
 
         public ImageBrush LoadImage(string ImagePath)
         {
-
             ImageBrush MyBrush = new ImageBrush();
             Image Img = new Image();
             Img.Source = new BitmapImage(new Uri(ImagePath));
@@ -439,16 +439,5 @@ namespace WMDB
                 LabelStatus.Foreground = Brushes.Green;
             }
         }
-
-        private void cmbGroupBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void cmbOrderBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
     }
 }
