@@ -65,10 +65,11 @@
     </Style>
 
     <Style x:Key="TextBoxNormal" TargetType="TextBox">
-        <Setter Property="Foreground" Value="#363435"></Setter>
+        <Setter Property="Foreground" Value="Black"></Setter>
         <Setter Property="FontFamily" Value="Cambria"></Setter>
         <Setter Property="FontWeight" Value="Bold"></Setter>
         <Setter Property="FontSize" Value="20Pt"></Setter>
+        <Setter Property="Height" Value="50"></Setter>
         <!--<Setter Property="Typography.Capitals" Value="SmallCaps"></Setter>-->
         <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
         <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
@@ -78,7 +79,7 @@
         <Setter Property="TextAlignment" Value="Center"></Setter>
     </Style>
     <Style x:Key="TextHeading" TargetType="TextBox">
-        <Setter Property="Foreground" Value="#363435"></Setter>
+        <Setter Property="Foreground" Value="Black"></Setter>
         <Setter Property="FontFamily" Value="Cambria"></Setter>
         <Setter Property="FontWeight" Value="Bold"></Setter>
         <Setter Property="FontSize" Value="15Pt"></Setter>
@@ -92,18 +93,18 @@
     </Style>
 
     <Style x:Key="LabelHeading" TargetType="Label">
-        <Setter Property="Foreground" Value="#363435"></Setter>
+        <Setter Property="Foreground" Value="Black"></Setter>
         <Setter Property="FontFamily" Value="Cambria"></Setter>
         <Setter Property="Typography.Capitals" Value="SmallCaps"></Setter>
         <Setter Property="FontWeight" Value="Bold"></Setter>
-        <Setter Property="FontSize" Value="25Pt"></Setter>
+        <Setter Property="FontSize" Value="27Pt"></Setter>
         <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
         <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
         <Setter Property="Background" Value="Transparent"></Setter>
         <Setter Property="BorderBrush" Value="Transparent"></Setter>
     </Style>
     <Style x:Key="TextLabel" TargetType="TextBox">
-        <Setter Property="Foreground" Value="#363435"></Setter>
+        <Setter Property="Foreground" Value="Black"></Setter>
         <Setter Property="FontFamily" Value="Cambria"></Setter>
         <Setter Property="FontWeight" Value="Bold"></Setter>
         <Setter Property="FontSize" Value="15Pt"></Setter>
@@ -117,7 +118,7 @@
     </Style>
 
     <Style x:Key="LabelRequerStyle" TargetType="Label">
-        <Setter Property="Foreground" Value="#363435"/>
+        <Setter Property="Foreground" Value="Black"/>
         <Setter Property="FontFamily" Value="Cambria"></Setter>
         <Setter Property="FontWeight" Value="Bold"></Setter>
         <Setter Property="FontSize" Value="16Pt"></Setter>
@@ -126,11 +127,11 @@
         <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
     </Style>
     <Style x:Key="LabelRequerStyle1" TargetType="Label">
-        <Setter Property="Foreground" Value="#463316"/>
+        <Setter Property="Foreground" Value="Black"/>
         <Setter Property="FontFamily" Value="Cambria"></Setter>
         <Setter Property="FontWeight" Value="Bold"></Setter>
         <Setter Property="FontSize" Value="20Pt"></Setter>
-        <Setter Property="HorizontalContentAlignment" Value="Right"></Setter>
+        <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
         <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
     </Style>
     <Style x:Key="LabelStyle" TargetType="Label">

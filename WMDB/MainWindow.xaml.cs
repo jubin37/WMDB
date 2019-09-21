@@ -28,6 +28,7 @@ namespace WMDB
         DataSet ds = new DataSet();
         GetSetValues GSV = new GetSetValues();
         string SqlQueryToView = "";
+        string DecryptEncrypt = "";
 
         struct GetSetValues
         {
@@ -54,8 +55,12 @@ namespace WMDB
             HideGrid();
             StartButtonsGrid.Visibility = Visibility.Visible;
             UserSelectionGrid.Visibility = Visibility.Hidden;
+            MyIspGrid.Visibility = Visibility.Hidden;
             NavigationButonsGrid.Visibility = Visibility.Hidden;
+            UserInputGrid.Visibility = Visibility.Hidden;
+            txtSelection.Text = "";
             LabelStatus.Content = "";
+            DecryptEncrypt = "";
         }
 
         public ImageBrush BindImage(Image img, string ImagePath)
@@ -115,10 +120,8 @@ namespace WMDB
         private void btnGetDBName_Click(object sender, RoutedEventArgs e)
         {
             HideGrid();
-            //var bc = new BrushConverter();
-            //NavigationGrid.Background = (Brush)bc.ConvertFrom("#273547");
             NavigationButonsGrid.Visibility = Visibility.Visible;
-            MyIspGrid.Visibility = Visibility.Hidden;
+            UserInputGrid.Visibility = Visibility.Hidden;
             string sql = "SELECT name FROM sys.databases order by name";
             GetValuesFromDB(sql, false);
             if (FillComboBox(cmbDBName, false) == true)
@@ -269,14 +272,54 @@ namespace WMDB
             MyIspGrid.Visibility = Visibility.Visible;
         }
 
+
+        private void btnDecryptEncrypt_Click(object sender, RoutedEventArgs e)
+        {
+            HideGrid();
+            StartButtonsGrid.Visibility = Visibility.Hidden;
+            NavigationButonsGrid.Visibility = Visibility.Visible;
+            UserInputGrid.Visibility = Visibility.Visible;
+        }
+
         private void btnDecrypt_Click(object sender, RoutedEventArgs e)
         {
-
+            string textboxvalue = txtSelection.Text.ToString();
+            DecryptText(textboxvalue);
         }
 
         private void btnEncrypt_Click(object sender, RoutedEventArgs e)
         {
+            string textboxvalue = txtSelection.Text.ToString();
+            EncryptText(textboxvalue);
+        }
+       
+        public void EncryptText(string openText)
+        {
+            try {
+                byte[] bytesToEncode = Encoding.UTF8.GetBytes(openText);
+                string encodedText = Convert.ToBase64String(bytesToEncode);
+                LabelStatus.FontSize = 22;
+                LabelStatus.Content = "Encoded Text: " + encodedText;
+            }
+            catch (Exception ex)
+            {
+                LabelStatus.Content = ex.Message;
+            }
+        }
 
+        public void DecryptText(string encryptedText)
+        {
+            try 
+            {            
+            byte[] decodedBytes = Convert.FromBase64String(encryptedText);
+            string decodedText = Encoding.UTF8.GetString(decodedBytes);
+            LabelStatus.FontSize = 22;
+            LabelStatus.Content = "Decoded Text: " + decodedText;
+            }
+            catch (Exception ex)
+            {
+                LabelStatus.Content = ex.Message;
+            }
         }
 
 
@@ -439,5 +482,6 @@ namespace WMDB
                 LabelStatus.Foreground = Brushes.Green;
             }
         }
+
     }
 }
