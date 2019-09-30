@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="WMDB.UserControls.UCEncryptDecrypt"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+            Width="Auto" Height="Auto">
+    <Grid Name="MainGrid">
+        <Grid Name="UserInputGrid" Height="200" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40*"/>
+                <RowDefinition Height="40*"/>
+                <RowDefinition Height="20*"/>
+            </Grid.RowDefinitions>
+            <Label Style="{StaticResource LabelRequerStyle1}" Name="LabelTextBoxSelection" Content="Encrypt or Decrypt Text" ></Label>
+            <Grid Name="EnterSearchGrid" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30*"></ColumnDefinition>
+                    <ColumnDefinition Width="60*"></ColumnDefinition>
+                    <ColumnDefinition Width="30*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Height="40" Name="btnEncrypt" Content="Encrypt" FontSize="15pt" Click="btnEncrypt_Click"  Width="150" TabIndex="1" />
+                <TextBox Background="Transparent" Width="300" Name="txtSelection" Style="{StaticResource TextBoxNormal}" Grid.Column="1" TabIndex="0" />
+                <Button Height="40" Name="btnDecrypt" Content="Decrypt" FontSize="15pt" Click="btnDecrypt_Click"  Width="150" Grid.Column="2" TabIndex="2" />
+            </Grid>
+        </Grid>
+        <Grid Name="InfoGrid" Grid.Row="1">
+            <Label Name="LabelStatus" Style="{StaticResource SmallLabelStyle}"></Label>
+        </Grid>
+    </Grid>
+</UserControl>

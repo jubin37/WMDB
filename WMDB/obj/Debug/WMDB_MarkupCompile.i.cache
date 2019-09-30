@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\WPF\WMDB\WMDB\App.xaml
-21223318459
+81046000261
 
-9-834738294
-151741930601
-MainWindow.xaml;Styles\StyleSheet.xaml;
+16-1377979593
+18-578319744
+MainWindow.xaml;Styles\StyleSheet.xaml;TestWindow.xaml;UserControls\UCEncryptDecrypt.xaml;UserControls\UCGetDBList.xaml;UserControls\UCMyISP.xaml;UserControls\UCReadData.xaml;UserControls\UCTest.xaml;
 
 False
 

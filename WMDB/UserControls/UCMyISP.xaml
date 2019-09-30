@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="WMDB.UserControls.UCMyISP"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+    <Grid Name="MainGrid">
+        <Grid Name="MyIspGrid" Height="250">
+            <WebBrowser Name="MyIspWB" />
+        </Grid>
+        <Grid Name="PleaseWaitGrid">
+            <Label Style="{StaticResource LabelRequerStyle1}" Name="labelPleaseWait">
+                <Label.Content>
+                    <AccessText TextWrapping="Wrap" TextAlignment="Center" Text="Please Wait"/>
+                </Label.Content>
+            </Label>
+        </Grid>
+    </Grid>
+</UserControl>

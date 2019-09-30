@@ -3,8 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WMDB"
-        mc:Ignorable="d"
+        xmlns:UC="clr-namespace:WMDB.UserControls"
         Title="WMDB" Background="Transparent" BorderThickness="3" Height="700" Width="990" WindowStyle="None" ResizeMode="CanMinimize" MouseDown="Window_MouseDown" WindowStartupLocation="CenterScreen" AllowsTransparency="True" >
     <Window.BitmapEffect>
         <DropShadowBitmapEffect Color="Black" Direction="-55" ShadowDepth="10" Softness="0.8"></DropShadowBitmapEffect>
@@ -65,116 +64,37 @@
                 </Grid>
                 <Grid Name="DynamicGrid" Grid.Row="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="25*"></RowDefinition>
-                        <RowDefinition Height="10*"></RowDefinition>
-                        <RowDefinition Height="5*"></RowDefinition>
-                        <RowDefinition Height="50*"></RowDefinition>
+                        <RowDefinition Height="95*"></RowDefinition>               
                         <RowDefinition Height="5*"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <Grid Name="StartButtonsGrid" Visibility="Hidden">
+                    <Grid Name="StartButtonsGrid">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="33*"></ColumnDefinition>
                             <ColumnDefinition Width="33*"></ColumnDefinition>
                             <ColumnDefinition Width="33*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="50*"></RowDefinition>
-                            <RowDefinition Height="50*"></RowDefinition>
+                            <RowDefinition Height="20*"></RowDefinition>
+                            <RowDefinition Height="20*"></RowDefinition>
+                            <RowDefinition Height="20*"></RowDefinition>
+                            <RowDefinition Height="20*"></RowDefinition>
+                            <RowDefinition Height="20*"></RowDefinition>
                         </Grid.RowDefinitions>
                         <Button Height="40" Name="btnGetDBName" FontSize="15pt" Click="btnGetDBName_Click" Content="Get DBList" Width="180" TabIndex="0" />
-                        <Button Height="40" Name="btnSearchDB" FontSize="15pt" Click="btnSearchDB_Click" Content="Serch in DB" Width="180" Grid.Column="1" TabIndex="1" />
+                        <Button Height="40" Name="btnSearchDB" FontSize="15pt" Content="Serch in DB" Width="180" Grid.Column="1" TabIndex="1" />
                         <Button Height="40" Name="btnKnowISP" FontSize="15pt" Click="btnKnowISP_Click" Content="My ISP" Width="180" Grid.Column="2" TabIndex="2" />
-                        <Button Height="40" Name="btnDecryptEncrypt" FontSize="15pt" Click="btnDecryptEncrypt_Click" Content="Encypt/Decrypt" Width="180" Grid.Row="1" TabIndex="3" />
+                        <Button Height="40" Name="btnReadData" FontSize="15pt" Click="btnReadData_Click" Content="Read Data" Width="180" Grid.Row="1" />
                     </Grid>
-                    <Grid Name="UserSelectionGrid" Visibility="Hidden">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50*" />
-                            <ColumnDefinition Width="50*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="25*"/>
-                            <RowDefinition Height="25*"/>
-                        </Grid.RowDefinitions>
-                        <Grid Name="DBNamesGrid" >
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40*" />
-                                <ColumnDefinition Width="60*" />
-                            </Grid.ColumnDefinitions>
-                            <Label Style="{StaticResource SmallLabelStyle}" Name="lblDBName">
-                                <Label.Content>
-                                    <AccessText TextWrapping="Wrap" TextAlignment="Left" Text="Select DBName"/>
-                                </Label.Content>
-                            </Label>
-                            <ComboBox Name="cmbDBName" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbDBName_SelectionChanged" Grid.Column="1" TabIndex="0" />
-                        </Grid>
-                        <Grid Name="TableNameGrid" Grid.Column="1" Visibility="Hidden">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40*"></ColumnDefinition>
-                                <ColumnDefinition Width="55*"></ColumnDefinition>
-                                <ColumnDefinition Width="5*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Label Style="{StaticResource SmallLabelStyle}" Name="lblTableName">
-                                <Label.Content>
-                                    <AccessText TextWrapping="Wrap" TextAlignment="Left" Text="Select Table Name"/>
-                                </Label.Content>
-                            </Label>
-                            <ComboBox Name="cmbTableName" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbTableName_SelectionChanged" Grid.Column="1" TabIndex="1" />
-                        </Grid>
-                        <Grid Name="ColumnNamesGrid" Grid.Row="1" Visibility="Hidden">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40*" />
-                                <ColumnDefinition Width="60*" />
-                            </Grid.ColumnDefinitions>
-                            <Label Style="{StaticResource SmallLabelStyle}" Name="lblColumnNames">
-                                <Label.Content>
-                                    <AccessText TextWrapping="Wrap" TextAlignment="Left" Text="Select Column Name"/>
-                                </Label.Content>
-                            </Label>
-                            <ComboBox Name="cmbColumnNames" Text="Select Item" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbColumnNames_SelectionChanged" Grid.Column="1" TabIndex="2" />
-                        </Grid>
-                        <Grid Name="ColumnValuesGrid" Grid.Row="1" Grid.Column="1" Visibility="Hidden" >
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="40*" />
-                                <ColumnDefinition Width="55*" />
-                                <ColumnDefinition Width="5*" />
-                            </Grid.ColumnDefinitions>
-                            <Label Style="{StaticResource SmallLabelStyle}" Name="lblColumnValue">
-                                <Label.Content>
-                                    <AccessText TextWrapping="Wrap" TextAlignment="Left" Text="Select Column Value"/>
-                                </Label.Content>
-                            </Label>
-                            <ComboBox Name="cmbColumnValue" Text="Select Item" Style="{StaticResource CustomComboBox}" SelectionChanged="cmbColumnValue_SelectionChanged" Grid.Column="1" TabIndex="3" />
-                        </Grid>
+                    <Grid Name="GetDBListGrid" Visibility="Hidden">
+                        <UC:UCGetDBList x:Name="UCGetDBList"/>
                     </Grid>
-
-                    <Grid Name="UserInputGrid" Height="200">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="40*"/>
-                            <RowDefinition Height="40*"/>
-                            <RowDefinition Height="20*"/>
-                        </Grid.RowDefinitions>
-                        <Label Style="{StaticResource LabelRequerStyle1}" Name="LabelTextBoxSelection" Content="Encrypt or Decrypt Text" ></Label>
-                        <Grid Name="EnterSearchGrid" Grid.Row="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="30*"></ColumnDefinition>
-                                <ColumnDefinition Width="60*"></ColumnDefinition>
-                                <ColumnDefinition Width="30*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Button Height="40" Name="btnEncrypt" Content="Encrypt" FontSize="15pt" Click="btnEncrypt_Click"  Width="150" TabIndex="1" />
-                            <TextBox Background="Transparent" Width="300" Name="txtSelection" Style="{StaticResource TextBoxNormal}" Grid.Column="1" TabIndex="0" />
-                            <Button Height="40" Name="btnDecrypt" Content="Decrypt" FontSize="15pt" Click="btnDecrypt_Click"  Width="150" Grid.Column="2" TabIndex="2" />
-                        </Grid>                        
+                    <Grid Name="MyIspGrid" Visibility="Hidden">
+                        <UC:UCMyISP x:Name="UCMyISP"></UC:UCMyISP>  
                     </Grid>
-                    <Grid Name="InfoGrid" Grid.Row="2">
-                        <Label Name="LabelStatus" Style="{StaticResource SmallLabelStyle}"></Label>
+                    <Grid Name="ReadDataGrid" Visibility="Hidden">
+                        <UC:UCReadData x:Name="UCReadData"></UC:UCReadData>
                     </Grid>
-                    <Grid Name="SqlDetailsGrid" Grid.Row="3" Visibility="Hidden">
-                        <DataGrid Name="SqlDataGrid"/>
-                    </Grid>
-                    <Grid Name="MyIspGrid" Grid.Row="3" Visibility="Hidden">
-                        <WebBrowser Name="MyIspWB" />
-                    </Grid>
-                    <Grid Name="ProgressBarGrid" Grid.Row="4">
+                    <Grid Name="ProgressBarGrid" Grid.Row="3">
                         <ProgressBar Name="prgbar" Minimum="0" Maximum="100"/>
                         <TextBlock Text="{Binding ElementName=prgbar, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Grid>
